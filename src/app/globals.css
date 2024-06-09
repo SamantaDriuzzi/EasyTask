@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+
+.bg-notebook-lines {
+    background-image: linear-gradient(to bottom, transparent 95%, #ccc 95%);
+    background-size: 100% 28px;
+    line-height: 24px;
+  }
+  
