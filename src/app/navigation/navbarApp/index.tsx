@@ -20,6 +20,8 @@ const NavbarApp = () => {
       handleCreateTeam();
     } else if (value === "joinTeam") {
       handleJoinTeam();
+    } else if (value === "infoTeam") {
+      handleInfoTeam();
     }
   };
 
@@ -32,7 +34,10 @@ const NavbarApp = () => {
   const handleJoinTeam = () => {
     router.push(`/join-team`);
   };
-
+  const handleInfoTeam = () => {
+    router.push(`/info-team/${id}`);
+  }; 
+  
   return (
     <div className="w-full h-30 bg-color5 fixed top-0 p-4 z-20">
       <div className="flex flex-row justify-between items-center">
@@ -41,18 +46,18 @@ const NavbarApp = () => {
           <Image src="/EasyTasks.svg" alt="AppName" width={100} height={100} />
         </Link>
         <nav className="flex space-x-8">
-          <a
+          <Link
             href="/home"
-            className="hover:text-gray-200 transition duration-300"
+            className="text-gray-100 hover:text-white hover:underline transition duration-300"
           >
             Inicio
-          </a>
-          <a href="/" className="hover:text-gray-200 transition duration-300">
+          </Link>
+          <Link href="/" className="text-gray-100 hover:text-white hover:underline transition duration-300">
             Tablero
-          </a>
+          </Link>
           <select
             onChange={handleSelectChange}
-            className="bg-color5 text-black hover:text-gray-200 transition duration-300"
+            className="bg-color5 text-gray-100 hover:text-white hover:underline transition duration-300"
             defaultValue=""
           >
             <option value="" disabled>
@@ -61,7 +66,11 @@ const NavbarApp = () => {
             <option value="myTeams">Mis Equipos</option>
             <option value="createTeam">Crear un equipo</option>
             <option value="joinTeam">Unirse a un equipo</option>
+            <option value="infoTeam">Información de equipo</option>
           </select>
+          <Link href="/donations" className="text-gray-100 hover:text-white hover:underline transition duration-300">
+            Donaciones
+          </Link>
         </nav>
         <LogoutButton />
       </div>
