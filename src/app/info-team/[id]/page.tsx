@@ -5,8 +5,8 @@ import Image from 'next/image';
 
 const TeamDetails = async ({ params }: { params: { id: string } }) => {
   const team: Team = await getTeamById(params.id);
-  const user: User = await getTeamById(params.id);
-
+  const user: User = await getTeamById(params.id); 
+  
   return (
     <div className="">
       <div className="bg-[#B4B3EA] py-10">

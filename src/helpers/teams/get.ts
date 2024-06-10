@@ -14,6 +14,7 @@ export const getTeamLeaderById = async (id: string) => {
     throw new Error(error);
   }
 };
+
 export const getTeamById = async (id: string) => {
   try {
     const response = await fetch(`${API_URL}/teams/${id}`, {
