@@ -36,8 +36,8 @@ const NavbarApp = () => {
   };
   const handleInfoTeam = () => {
     router.push(`/info-team/${id}`);
-  };
-
+  }; 
+  
   return (
     <div className="w-full h-30 bg-color5 fixed top-0 p-4 z-20">
       <div className="flex flex-row justify-between items-center">
