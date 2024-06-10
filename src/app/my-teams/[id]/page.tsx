@@ -1,12 +1,10 @@
-import { useAuth } from "@/contextLogin/AuthContext";
-import { getTeamLeaderById } from "@/helpers/teams/get";
-import { getUserById } from "@/helpers/users/get";
+import { getMyTeams } from "@/helpers/teams/get";
+
 import { Team } from "@/utils/types/interface-team";
 import React from "react";
 
 const MyTeams = async ({ params }: { params: { id: string } }) => {
-  const user = await getUserById(params.id);
-  const teams = await getTeamLeaderById(params.id);
+  const teams = await getMyTeams(params.id);
   return (
     <div className="">
       <div className="max-w-8xl mx-auto mt-20">
@@ -22,7 +20,7 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
                 SOS LIDER
               </h3>
               {teams ? (
-                teams.map((team: Team) => (
+                teams.leaderTeams.map((team: Team) => (
                   <div
                     className="mb-4 p-4 bg-[#329FA6] text-white rounded-md"
                     key={team.team_id}
@@ -49,8 +47,8 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
               <h3 className="text-xl font-semibold mb-4 text-gray-500">
                 ERES COLABORADOR
               </h3>
-              {user ? (
-                user.teams.map((team: Team) => (
+              {teams ? (
+                teams.collaboratorTeams.map((team: Team) => (
                   <div
                     key={team.team_id}
                     className="mb-4 p-4 bg-white text-black rounded-md"
