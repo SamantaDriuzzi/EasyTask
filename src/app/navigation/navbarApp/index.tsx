@@ -68,6 +68,9 @@ const NavbarApp = () => {
             <option value="joinTeam">Unirse a un equipo</option>
             <option value="infoTeam">Información de equipo</option>
           </select>
+          <Link href="/donations" className="text-gray-100 hover:text-white hover:underline transition duration-300">
+            Donaciones
+          </Link>
         </nav>
         <LogoutButton />
       </div>

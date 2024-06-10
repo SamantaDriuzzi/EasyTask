@@ -44,3 +44,4 @@ export const getMyTeams = async (id: string) => {
     throw new Error(error);
   }
 };
+
