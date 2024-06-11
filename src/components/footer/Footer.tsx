@@ -1,9 +1,12 @@
-/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import { FaFacebook, FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
 import Logo from "../logo";
 
-const Footer = () => {
+const Footer = ({
+  handleNewsletterOpen,
+}: {
+  handleNewsletterOpen: () => void;
+}) => {
   return (
     <footer className="bg-footer-gradient text-black py-10 px-8">
       <div className="container mx-auto flex justify-between items-center">
@@ -19,13 +22,21 @@ const Footer = () => {
             <li>
               <Link href="/">Donaciones</Link>
             </li>
+            <li>
+              <button
+                onClick={handleNewsletterOpen}
+                className="text-black none"
+              >
+                Suscribirse al Newsletter
+              </button>
+            </li>
           </ul>
         </div>
         <div className="flex flex-col items-center">
           <Link href="/">
             <Logo />
           </Link>
-          <div className="flex  space-x-4">
+          <div className="flex space-x-4">
             <Link href="https://facebook.com">
               <FaFacebook size={24} />
             </Link>
