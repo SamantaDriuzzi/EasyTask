@@ -11,6 +11,8 @@ interface AuthContextProps {
   validateUserSession: () => boolean | null;
   userIdFromToken: () => string | null;
   handleSignOut: () => void;
+  teamID: string | null;
+  setTeamID: (id: string | null) => void;
 }
 const AuthContext = createContext<AuthContextProps>({
   user: null,
@@ -18,11 +20,14 @@ const AuthContext = createContext<AuthContextProps>({
   validateUserSession: () => null,
   userIdFromToken: () => null,
   handleSignOut: () => {},
+  teamID: null,
+  setTeamID: () => {},
 });
 
 export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<any>(null);
   const { data: session, status } = useSession();
+  const [teamID, setTeamID] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "authenticated" && session) {
@@ -39,7 +44,6 @@ export const AuthProvider = ({ children }: any) => {
 
   const userIdFromToken = () => {
     if (typeof window === "undefined") {
-      // Estamos en el servidor, no se puede usar localStorage
       return null;
     }
 
@@ -77,6 +81,8 @@ export const AuthProvider = ({ children }: any) => {
         validateUserSession,
         userIdFromToken,
         handleSignOut,
+        teamID,
+        setTeamID,
       }}
     >
       {children}

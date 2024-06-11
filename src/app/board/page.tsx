@@ -12,7 +12,7 @@ const initialTasks = {
 
 type Task = { id: string; content: string };
 
-const Dashboard = () => {
+const Board = () => {
   const [sprints, setSprints] = useState<string[]>([
     "SPRINT 1",
     "SPRINT 2",
@@ -178,4 +178,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Board;
