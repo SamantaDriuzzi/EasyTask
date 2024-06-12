@@ -1,10 +1,14 @@
 "use client";
-
-import React, { useState } from "react";
+import ModalNewSprint from "@/components/modals/modalNewSprint";
+import { useAuth } from "@/contextLogin/AuthContext";
+import { postNewSprint } from "@/helpers/sprint/post";
+import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { Sprint, SprintData } from "../../utils/types/interface-sprint";
+import { getAllSprintByTeam } from "@/helpers/sprint/get";
 
 const initialTasks = {
-  open: [{ id: "1", content: "Proyecto/software" }],
+  open: [],
   inProgress: [],
   testing: [],
   done: [],
@@ -13,12 +17,52 @@ const initialTasks = {
 type Task = { id: string; content: string };
 
 const Board = () => {
-  const [sprints, setSprints] = useState<string[]>([
-    "SPRINT 1",
-    "SPRINT 2",
-    "SPRINT 3",
-  ]);
-  const [newSprint, setNewSprint] = useState<string>("");
+  // const { teamID } = useAuth();
+  const [teamID, setTeamID] = useState<string | null>(
+    "39781c57-b0bc-4c74-bb90-23dd88a145e9"
+  );
+  const [sprints, setSprints] = useState<string[]>([]);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [idSprint, setIdSprint] = useState<string>("");
+
+  useEffect(() => {
+    const fetchSprints = async () => {
+      if (teamID) {
+        try {
+          const sprintData = await getAllSprintByTeam(teamID);
+          console.log(
+            "sprint data al hacer getAllSprintByTeam🎈🎈",
+            sprintData
+          );
+          setSprints(sprintData.map((sprint: Sprint) => sprint.name));
+          console.log("Son todos los sprint en Sprints🎢🧵", sprints);
+        } catch (error) {
+          console.log("error para obtener sprints", error);
+        }
+      }
+    };
+    fetchSprints();
+  }, [teamID]);
+
+  const handleSaveSprint = async (name: string, goal: string) => {
+    if (teamID) {
+      try {
+        const newSprint = await postNewSprint(teamID, {
+          name,
+          goal,
+          status: "In progress",
+        });
+        console.log("Nuevo Sprint:", newSprint);
+        setSprints([...sprints, newSprint.name]);
+        setModalVisible(false);
+      } catch (error) {
+        console.error("Error creating sprint:", error);
+      }
+    } else {
+      console.error("Team ID is not available");
+    }
+  };
+
   const [newTask, setNewTask] = useState<string>("");
   const [tasks, setTasks] = useState<{
     open: Task[];
@@ -26,13 +70,6 @@ const Board = () => {
     testing: Task[];
     done: Task[];
   }>(initialTasks);
-
-  const handleAddSprint = () => {
-    if (newSprint.trim()) {
-      setSprints([...sprints, newSprint.trim()]);
-      setNewSprint("");
-    }
-  };
 
   const handleAddTask = () => {
     if (newTask.trim()) {
@@ -77,6 +114,11 @@ const Board = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <ModalNewSprint
+        isVisible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onSave={handleSaveSprint}
+      />
       <div className="bg-[#B4B3EA] py-10">
         <h1 className="text-2xl font-bold text-left text-black ml-6 mt-14">
           Tablero
@@ -85,30 +127,24 @@ const Board = () => {
 
       <div className="flex flex-row p-6">
         <div className="w-1/5 bg-white border border-gray-300 rounded-lg shadow-md p-4 mr-4">
-          <h2 className="text-lg font-bold mb-4">Nuevo Sprint</h2>
-          <input
-            type="text"
-            value={newSprint}
-            onChange={(e) => setNewSprint(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-md mb-4"
-            placeholder="Nombre del sprint"
-          />
-          <button
-            onClick={handleAddSprint}
-            className="w-full bg-[#329FA6] hover:bg-[#267d84] text-white font-bold py-2 px-4 rounded-lg"
-          >
-            AGREGAR
-          </button>
+          <h2 className="text-lg font-bold mb-4">Sprints</h2>
+
           <div className="mt-6">
             {sprints.map((sprint, index) => (
-              <div
+              <button
                 key={index}
                 className="py-2 px-4 mb-2 bg-[#329FA6] text-white rounded-lg cursor-pointer"
               >
                 {sprint}
-              </div>
+              </button>
             ))}
           </div>
+          <button
+            onClick={() => setModalVisible(true)}
+            className="w-full bg-color3 hover:bg-color4 text-white font-bold py-2 px-4 rounded-lg mb-4"
+          >
+            AGREGAR
+          </button>
         </div>
         <DragDropContext onDragEnd={onDragEnd}>
           {Object.entries(tasks).map(([columnId, columnTasks]) => (

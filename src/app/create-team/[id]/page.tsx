@@ -9,7 +9,7 @@ import { User } from "@/utils/types/interface-user";
 import ModalInviteCode from "@/components/modals/modalInviteCode";
 
 const CreateTeam = ({ params }: { params: { id: string } }) => {
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>("");
   const [user, setUser] = useState<User | null>(null);
   const [teamData, setTeamData] = useState<TeamCrate>({
     team_name: "",
@@ -63,6 +63,7 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
     try {
       const response = await postCreateTeam(params.id, teamData);
       if (response && response.team_name && response.team_id) {
+        console.log("Response crear equipo🎈🎀🎁:", response);
         const invitationCode = response.invitation_code;
         setInviteCode(invitationCode);
         setInvitation(true);
