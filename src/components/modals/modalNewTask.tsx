@@ -1,11 +1,15 @@
 "use client";
+import dynamic from "next/dynamic";
 import React, { FC, useState } from "react";
-import { TaskData, Task } from "@/utils/types/interface-task";
+import { TaskData } from "@/utils/types/interface-task";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.snow.css";
 
 interface ModalNewTaskProps {
-  isVisible: boolean;
+  isVisible: { isOpen: boolean; selectedTaskId: string | null };
   onClose: () => void;
-  onSave: (task: TaskData) => void;
+  onSave: (task: TaskData, taskId: string | null) => void;
 }
 
 const statusOptions = {
@@ -22,7 +26,7 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
 }) => {
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
-  const [status, setStatus] = useState("Open");
+  const [status, setStatus] = useState("open");
   const [priority, setPriority] = useState<number>(1);
   const [storyPoints, setStoryPoints] = useState<number>(1);
 
@@ -35,84 +39,96 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
         priority,
         story_points: storyPoints,
       };
-      onSave(newTask);
+      onSave(newTask, isVisible.selectedTaskId);
     }
   };
 
-  if (!isVisible) return null;
+  if (!isVisible.isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+      <div className="bg-color10 p-6 rounded-lg shadow-lg max-w-3xl w-full">
         <h2 className="text-xl font-bold mb-4">Crear nueva tarea</h2>
         <input
           type="text"
           value={taskName}
           onChange={(e) => setTaskName(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md mb-4"
+          className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Nombre de la tarea"
         />
-        <input
-          type="text"
+        <ReactQuill
           value={taskDescription}
-          onChange={(e) => setTaskDescription(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md mb-4"
+          onChange={setTaskDescription}
+          className="mb-4 bg-transparent"
           placeholder="Descripción de la tarea"
         />
-        <label className="block mb-2" htmlFor="status">
-          Estado:
-        </label>
-        <select
-          id="status"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md mb-4"
-        >
-          {Object.entries(statusOptions).map(([key, value]) => (
-            <option key={key} value={key}>
-              {value}
-            </option>
-          ))}
-        </select>
-        <label htmlFor="priority">Prioridad:</label>
-        <select
-          id="priority"
-          value={priority}
-          onChange={(e) => setPriority(Number(e.target.value))}
-          className="w-full p-2 border border-gray-300 rounded-md mb-4"
-        >
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-        </select>
-        <label htmlFor="storyPoints">Puntuación:</label>
-        <select
-          id="storyPoints"
-          value={storyPoints}
-          onChange={(e) => setStoryPoints(Number(e.target.value))}
-          className="w-full p-2 border border-gray-300 rounded-md mb-4"
-        >
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-        </select>
 
-        <div className="flex items-center justify-between">
-          <button
-            onClick={handleSave}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Guardar
-          </button>
+        <div className="flex flex-row w-full mt-8 space-x-4">
+          <div className="flex flex-col w-1/3">
+            <label className="block mb-2" htmlFor="status">
+              Estado:
+            </label>
+            <select
+              id="status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {Object.entries(statusOptions).map(([key, value]) => (
+                <option key={key} value={key}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col w-1/3">
+            <label htmlFor="priority" className="block mb-2">
+              Prioridad:
+            </label>
+            <select
+              id="priority"
+              value={priority}
+              onChange={(e) => setPriority(Number(e.target.value))}
+              className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {[1, 2, 3, 4, 5].map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col w-1/3">
+            <label htmlFor="storyPoints" className="block mb-2">
+              Puntuación:
+            </label>
+            <select
+              id="storyPoints"
+              value={storyPoints}
+              onChange={(e) => setStoryPoints(Number(e.target.value))}
+              className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {[1, 2, 3, 4, 5].map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between mt-8">
           <button
             onClick={onClose}
-            className="bg-gray-500 text-white px-4 py-2 rounded"
+            className="bg-gray-500 text-white px-4 py-2 rounded w-1/4 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700"
           >
             Cerrar
+          </button>
+          <button
+            onClick={handleSave}
+            className="bg-blue-500 text-white px-4 py-2 rounded w-1/2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700"
+          >
+            Guardar
           </button>
         </div>
       </div>

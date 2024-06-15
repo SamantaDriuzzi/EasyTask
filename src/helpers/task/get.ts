@@ -14,3 +14,18 @@ export const getTasksBySprint = async (teamID: string) => {
     throw new Error(error);
   }
 };
+
+export const getTasksById = async (taskId: string) => {
+  try {
+    const response = await fetch(`${API_URL}/taskS/${taskId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};

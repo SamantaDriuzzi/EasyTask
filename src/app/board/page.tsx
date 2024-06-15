@@ -6,11 +6,12 @@ import React, { useEffect, useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Sprint, SprintData } from "../../utils/types/interface-sprint";
 import { getAllSprintByTeam } from "@/helpers/sprint/get";
-import { getTasksBySprint } from "@/helpers/task/get";
+import { getTasksById, getTasksBySprint } from "@/helpers/task/get";
 import { Task, TaskData } from "@/utils/types/interface-task";
 import ModalNewTask from "@/components/modals/modalNewTask";
 import ModalNewSprint from "@/components/modals/modalNewSprint";
 import { postNewTask } from "@/helpers/task/post";
+import { putTask } from "@/helpers/task/put";
 
 const initialTasks: {
   open: Task[];
@@ -39,7 +40,10 @@ const Board = () => {
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [idSprint, setIdSprint] = useState<string | null>(null);
   const [modalSprintVisible, setModalSprintVisible] = useState<boolean>(false);
-  const [modalTaskVisible, setModalTaskVisible] = useState<boolean>(false);
+  const [modalTaskVisible, setModalTaskVisible] = useState<{
+    isOpen: boolean;
+    selectedTaskId: string | null;
+  }>({ isOpen: false, selectedTaskId: null });
   const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
   const [tasks, setTasks] = useState<{
     open: Task[];
@@ -102,6 +106,14 @@ const Board = () => {
     }
   };
 
+  const createOrUpdateTask = (task: TaskData, taskId: string | null) => {
+    if (taskId) {
+      handleUpdateTask(taskId, task);
+    } else {
+      handleAddTask(task);
+    }
+  };
+
   //------- AGREGAR TAREA -------------------------------------
   const handleAddTask = async (task: TaskData) => {
     if (idSprint && teamID) {
@@ -126,34 +138,49 @@ const Board = () => {
         }
 
         setTasks(updatedTasks);
+        setModalTaskVisible({ isOpen: false, selectedTaskId: null });
       } catch (error) {
         console.error("Error creating task:", error);
       }
     } else {
       console.error("ID Sprint | Team ID is not available");
+      setModalTaskVisible({ isOpen: false, selectedTaskId: null });
     }
   };
-  //---------- CLICK EN TAREA ----------------------------------------
 
-  const handleTaskClick = async (sprintId: string) => {
+  //---------- CLICK EN TAREA PARA EDITARLA ----------------------------------------
+
+  const handleUpdateTask = async (task_id: string, task: TaskData) => {
     try {
-      setIdSprint(sprintId);
-      const tasksData = await getTasksBySprint(sprintId);
-      const organizedTasks = {
-        open: tasksData.filter((task: Task) => task.status === "open"),
-        inProgress: tasksData.filter(
-          (task: Task) => task.status === "inprogress"
-        ),
-        testing: tasksData.filter((task: Task) => task.status === "testing"),
-        done: tasksData.filter((task: Task) => task.status === "done"),
+      const updateTask = await putTask(task_id, task);
+      console.log("Tarea actualizada🎭🎪", updateTask);
+
+      const updatedArrayTasks = {
+        open: tasks.open.filter((task) => task.task_id !== task_id),
+        inProgress: tasks.inProgress.filter((task) => task.task_id !== task_id),
+        testing: tasks.testing.filter((task) => task.task_id !== task_id),
+        done: tasks.done.filter((task) => task.task_id !== task_id),
       };
-      setTasks(organizedTasks);
-      setSelectedSprint(sprintId);
+
+      const updatedTask = await getTasksById(updateTask.task_id);
+
+      if (updatedTask.status === "open") {
+        updatedArrayTasks.open.push(updatedTask);
+      } else if (updatedTask.status === "inProgress") {
+        updatedArrayTasks.inProgress.push(updatedTask);
+      } else if (updatedTask.status === "testing") {
+        updatedArrayTasks.testing.push(updatedTask);
+      } else if (updatedTask.status === "done") {
+        updatedArrayTasks.done.push(updatedTask);
+      }
+
+      setTasks(updatedArrayTasks);
+      setModalTaskVisible({ isOpen: false, selectedTaskId: null });
     } catch (error) {
       console.error("Error fetching tasks:", error);
+      setModalTaskVisible({ isOpen: false, selectedTaskId: null });
     }
   };
-
   //------------------------------------------------------------------
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
@@ -190,9 +217,12 @@ const Board = () => {
       />
       <ModalNewTask
         isVisible={modalTaskVisible}
-        onClose={() => setModalTaskVisible(false)}
-        onSave={handleAddTask}
+        onClose={() =>
+          setModalTaskVisible({ isOpen: false, selectedTaskId: null })
+        }
+        onSave={createOrUpdateTask}
       />
+
       <div className="bg-[#B4B3EA] py-10">
         <h1 className="text-2xl font-bold text-left text-black ml-6 mt-14">
           Tablero
@@ -256,6 +286,12 @@ const Board = () => {
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
                                 className="bg-white p-4 rounded-md shadow-md mb-4"
+                                onClick={() =>
+                                  setModalTaskVisible({
+                                    isOpen: true,
+                                    selectedTaskId: task.task_id,
+                                  })
+                                }
                               >
                                 <p>{task.name}</p>
                               </div>
@@ -266,7 +302,12 @@ const Board = () => {
                         {columnId === "open" && (
                           <div className="mt-4">
                             <button
-                              onClick={() => setModalTaskVisible(true)}
+                              onClick={() =>
+                                setModalTaskVisible({
+                                  isOpen: true,
+                                  selectedTaskId: null,
+                                })
+                              }
                               className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg"
                             >
                               + AGREGAR
