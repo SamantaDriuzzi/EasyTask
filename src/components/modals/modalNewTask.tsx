@@ -1,13 +1,14 @@
 "use client";
 import dynamic from "next/dynamic";
-import React, { FC, useState } from "react";
-import { TaskData } from "@/utils/types/interface-task";
+import React, { FC, useCallback, useEffect, useState } from "react";
+import { Task, TaskData } from "@/utils/types/interface-task";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
+import { getTasksById } from "@/helpers/task/get";
 
 interface ModalNewTaskProps {
-  isVisible: { isOpen: boolean; selectedTaskId: string | null };
+  isVisible: { isOpen: boolean; selectedTask: Task | null };
   onClose: () => void;
   onSave: (task: TaskData, taskId: string | null) => void;
 }
@@ -28,7 +29,23 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
   const [taskDescription, setTaskDescription] = useState("");
   const [status, setStatus] = useState("open");
   const [priority, setPriority] = useState<number>(1);
-  const [storyPoints, setStoryPoints] = useState<number>(1);
+  const [story_points, setStoryPoints] = useState<number>(1);
+
+  const { selectedTask } = isVisible;
+
+  const handleTaskToEdit = useCallback(async () => {
+    if (selectedTask?.task_id) {
+      setTaskName(selectedTask.name);
+      setTaskDescription(selectedTask.description);
+      setStatus(selectedTask.status);
+      setPriority(selectedTask.priority);
+      setStoryPoints(selectedTask.story_points);
+    }
+  }, [selectedTask]);
+
+  useEffect(() => {
+    handleTaskToEdit();
+  }, [handleTaskToEdit]);
 
   const handleSave = () => {
     if (taskName) {
@@ -37,9 +54,9 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
         description: taskDescription,
         status,
         priority,
-        story_points: storyPoints,
+        story_points,
       };
-      onSave(newTask, isVisible.selectedTaskId);
+      onSave(newTask, selectedTask?.task_id || null);
     }
   };
 
@@ -99,12 +116,12 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
             </select>
           </div>
           <div className="flex flex-col w-1/3">
-            <label htmlFor="storyPoints" className="block mb-2">
+            <label htmlFor="story_points" className="block mb-2">
               Puntuación:
             </label>
             <select
-              id="storyPoints"
-              value={storyPoints}
+              id="story_points"
+              value={story_points}
               onChange={(e) => setStoryPoints(Number(e.target.value))}
               className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >

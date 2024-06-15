@@ -42,8 +42,8 @@ const Board = () => {
   const [modalSprintVisible, setModalSprintVisible] = useState<boolean>(false);
   const [modalTaskVisible, setModalTaskVisible] = useState<{
     isOpen: boolean;
-    selectedTaskId: string | null;
-  }>({ isOpen: false, selectedTaskId: null });
+    selectedTask: Task | null;
+  }>({ isOpen: false, selectedTask: null });
   const [selectedSprint, setSelectedSprint] = useState<string | null>(null);
   const [tasks, setTasks] = useState<{
     open: Task[];
@@ -51,7 +51,6 @@ const Board = () => {
     testing: Task[];
     done: Task[];
   }>(initialTasks);
-  const [newTask, setNewTask] = useState<string>("");
 
   // ------------ TRAER TODOS LOS SPRINT DEL EQUIPO ---------------------
   useEffect(() => {
@@ -78,7 +77,6 @@ const Board = () => {
         });
         setSprints([...sprints, newSprint]);
         setModalSprintVisible(false);
-        console.log(newSprint);
       } catch (error) {
         console.error("Error creating sprint:", error);
       }
@@ -88,13 +86,13 @@ const Board = () => {
   };
   //-------------CLICK EN UN SPRINT---------------------------
   const handleSprintClick = async (sprintId: string) => {
+    setIdSprint(sprintId);
     try {
-      setIdSprint(sprintId);
       const tasksData = await getTasksBySprint(sprintId);
       const organizedTasks = {
         open: tasksData.filter((task: Task) => task.status === "open"),
         inProgress: tasksData.filter(
-          (task: Task) => task.status === "inprogress"
+          (task: Task) => task.status === "inProgress"
         ),
         testing: tasksData.filter((task: Task) => task.status === "testing"),
         done: tasksData.filter((task: Task) => task.status === "done"),
@@ -138,13 +136,13 @@ const Board = () => {
         }
 
         setTasks(updatedTasks);
-        setModalTaskVisible({ isOpen: false, selectedTaskId: null });
+        setModalTaskVisible({ isOpen: false, selectedTask: null });
       } catch (error) {
         console.error("Error creating task:", error);
       }
     } else {
       console.error("ID Sprint | Team ID is not available");
-      setModalTaskVisible({ isOpen: false, selectedTaskId: null });
+      setModalTaskVisible({ isOpen: false, selectedTask: null });
     }
   };
 
@@ -153,7 +151,6 @@ const Board = () => {
   const handleUpdateTask = async (task_id: string, task: TaskData) => {
     try {
       const updateTask = await putTask(task_id, task);
-      console.log("Tarea actualizada🎭🎪", updateTask);
 
       const updatedArrayTasks = {
         open: tasks.open.filter((task) => task.task_id !== task_id),
@@ -175,10 +172,10 @@ const Board = () => {
       }
 
       setTasks(updatedArrayTasks);
-      setModalTaskVisible({ isOpen: false, selectedTaskId: null });
+      setModalTaskVisible({ isOpen: false, selectedTask: null });
     } catch (error) {
       console.error("Error fetching tasks:", error);
-      setModalTaskVisible({ isOpen: false, selectedTaskId: null });
+      setModalTaskVisible({ isOpen: false, selectedTask: null });
     }
   };
   //------------------------------------------------------------------
@@ -218,7 +215,7 @@ const Board = () => {
       <ModalNewTask
         isVisible={modalTaskVisible}
         onClose={() =>
-          setModalTaskVisible({ isOpen: false, selectedTaskId: null })
+          setModalTaskVisible({ isOpen: false, selectedTask: null })
         }
         onSave={createOrUpdateTask}
       />
@@ -281,6 +278,7 @@ const Board = () => {
                             index={index}
                           >
                             {(provided) => (
+                              //TAREA
                               <div
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
@@ -289,7 +287,7 @@ const Board = () => {
                                 onClick={() =>
                                   setModalTaskVisible({
                                     isOpen: true,
-                                    selectedTaskId: task.task_id,
+                                    selectedTask: task,
                                   })
                                 }
                               >
@@ -305,7 +303,7 @@ const Board = () => {
                               onClick={() =>
                                 setModalTaskVisible({
                                   isOpen: true,
-                                  selectedTaskId: null,
+                                  selectedTask: null,
                                 })
                               }
                               className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg"
