@@ -12,3 +12,11 @@ export interface Task {
   story_points: number;
   collaborators: User[];
 }
+
+export interface TaskData {
+  name: string;
+  description: string;
+  status: string;
+  priority: number;
+  story_points: number;
+}
