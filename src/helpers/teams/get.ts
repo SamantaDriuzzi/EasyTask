@@ -39,9 +39,9 @@ export const getMyTeams = async (id: string) => {
       },
     });
     const data = await response.json();
+    console.log("equiposss", data);
     return data;
   } catch (error: any) {
     throw new Error(error);
   }
 };
-

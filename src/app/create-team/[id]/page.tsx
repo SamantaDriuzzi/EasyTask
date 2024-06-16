@@ -63,7 +63,6 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
     try {
       const response = await postCreateTeam(params.id, teamData);
       if (response && response.team_name && response.team_id) {
-        console.log("Response crear equipo🎈🎀🎁:", response);
         const invitationCode = response.invitation_code;
         setInviteCode(invitationCode);
         setInvitation(true);

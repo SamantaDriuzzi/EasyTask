@@ -6,6 +6,7 @@ import React from "react";
 
 const MyTeams = async ({ params }: { params: { id: string } }) => {
   const teams = await getMyTeams(params.id);
+
   return (
     <div className="">
       <div className="max-w-8xl mx-auto mt-20">
