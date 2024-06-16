@@ -1,4 +1,8 @@
+import { ReactNode } from "react";
+
 export interface Team {
+  id(id: any): void;
+  name: ReactNode;
   team_id: string;
   team_name: string;
   description: string;
