@@ -1,4 +1,5 @@
 "use client";
+import ChatButton from "@/components/ChatButton";
 import Logo from "@/components/logo";
 import ModalJoinTeam from "@/components/modals/modalJoinTeam";
 import { useAuth } from "@/contextLogin/AuthContext";
@@ -73,6 +74,7 @@ const UneteAUnEquipoPage = () => {
             team_name={teamName}
           />
         </div>
+        <ChatButton />
       </div>
     </div>
   );

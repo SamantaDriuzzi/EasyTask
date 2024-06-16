@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getUserById } from "@/helpers/users/get";
 import { User } from "@/utils/types/interface-user";
 import ModalInviteCode from "@/components/modals/modalInviteCode";
+import ChatButton from "@/components/ChatButton";
 
 const CreateTeam = ({ params }: { params: { id: string } }) => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -184,6 +185,7 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
             onClose={closeModal}
             inviteCode={inviteCode}
           />
+          <ChatButton />
         </div>
       </div>
     </div>

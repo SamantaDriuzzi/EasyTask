@@ -1,3 +1,4 @@
+import ChatButton from "@/components/ChatButton";
 import { getMyTeams } from "@/helpers/teams/get";
 
 import { Team } from "@/utils/types/interface-team";
@@ -69,6 +70,7 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
                 </div>
               )}
             </div>
+            <ChatButton />
           </div>
         </div>
       </div>

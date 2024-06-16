@@ -1,4 +1,5 @@
 "use client";
+import ChatButton from "@/components/ChatButton";
 import { useAuth } from "@/contextLogin/AuthContext";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -60,6 +61,7 @@ const Home = () => {
             />
             <h2 className="my-4 hover:underline">MIS EQUIPOS</h2>
           </button>
+          <ChatButton />
         </div>
       </section>
     </>
