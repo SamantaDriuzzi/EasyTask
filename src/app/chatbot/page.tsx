@@ -88,9 +88,9 @@ const Chatbot = () => {
               />
               <button
                 onClick={handleSend}
-                className="bg-[#6C63FF] text-white p-3 rounded-md ml-2"
+                className="bg-[#6C63FF] text-white p-2 rounded-full ml-2 flex items-center justify-center w-12 h-12"
               >
-                <Image src="/chat2.png" alt="Send" width={30} height={30} />
+                <Image src="/send3.png" alt="Send" width={30} height={30} />
               </button>
             </div>
           </div>
