@@ -1,5 +1,6 @@
 "use client";
 
+import postUserGoogle from "@/helpers/users/post";
 import { JwtPayload } from "@/utils/types/interface-auth";
 import { jwtDecode } from "jwt-decode";
 import { signOut, useSession } from "next-auth/react";
@@ -27,6 +28,14 @@ export const AuthProvider = ({ children }: any) => {
   useEffect(() => {
     if (status === "authenticated" && session) {
       localStorage.setItem("user", JSON.stringify(session.user));
+      postUserGoogle(session.user)
+        .then((data) => setUser(data))
+        .then(() => {
+          localStorage.setItem(
+            "userSession",
+            JSON.stringify({ token: session })
+          );
+        });
     }
   }, [status, session]);
 
