@@ -27,14 +27,13 @@ export const AuthProvider = ({ children }: any) => {
 
   useEffect(() => {
     if (status === "authenticated" && session) {
-      localStorage.setItem("user", JSON.stringify(session.user));
       postUserGoogle(session.user)
-        .then((data) => setUser(data))
-        .then(() => {
-          localStorage.setItem(
-            "userSession",
-            JSON.stringify({ token: session })
-          );
+        .then((data) => {
+          const { token } = data;
+          localStorage.setItem("userSession", JSON.stringify({ token: token }));
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
         });
     }
   }, [status, session]);
