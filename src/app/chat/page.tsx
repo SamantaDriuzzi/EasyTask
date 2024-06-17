@@ -4,7 +4,7 @@ import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 
-const Chatbot = () => {
+const Chat = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [input, setInput] = useState("");
 
@@ -31,12 +31,7 @@ const Chatbot = () => {
       <main className="w-full max-w-8xl flex flex-col items-center mt-4 px-4">
         <div className="w-full flex flex-col lg:flex-row">
           <div className="w-full lg:w-1/3 bg-[#6C63FF] p-4 rounded-lg flex flex-col items-center mb-4 lg:mb-0">
-            <Image
-              src="/catchatbot.svg"
-              alt="Chatbot"
-              width={200}
-              height={100}
-            />
+            <Image src="/catchat.svg" alt="Chat" width={200} height={100} />
             <h3 className="text-white mt-4 text-center">
               Envía un mensaje a un compañero de trabajo
             </h3>
@@ -100,4 +95,4 @@ const Chatbot = () => {
   );
 };
 
-export default Chatbot;
+export default Chat;

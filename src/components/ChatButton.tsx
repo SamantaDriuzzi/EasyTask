@@ -7,7 +7,7 @@ const ChatButton = () => {
   const router = useRouter();
 
   const handleClick = () => {
-    router.push("/chatbot");
+    router.push("/chat");
   };
 
   return (
