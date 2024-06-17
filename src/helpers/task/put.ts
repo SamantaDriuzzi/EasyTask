@@ -18,3 +18,20 @@ export const putTask = async (task_id: string, taskData: TaskData) => {
     throw new Error(error);
   }
 };
+export const putAssignTask = async (task_id: string, user_id: string) => {
+  try {
+    const response = await fetch(
+      `${API_URL}/tasks/${task_id}/assing/${user_id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};

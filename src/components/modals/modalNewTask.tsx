@@ -5,7 +5,6 @@ import { Task, TaskData } from "@/utils/types/interface-task";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
-import { getTasksById } from "@/helpers/task/get";
 
 interface ModalNewTaskProps {
   isVisible: { isOpen: boolean; selectedTask: Task | null };
@@ -65,75 +64,87 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
       <div className="bg-color10 p-6 rounded-lg shadow-lg max-w-3xl w-full">
-        <h2 className="text-xl font-bold mb-4">Crear nueva tarea</h2>
-        <input
-          type="text"
-          value={taskName}
-          onChange={(e) => setTaskName(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Nombre de la tarea"
-        />
-        <ReactQuill
-          value={taskDescription}
-          onChange={setTaskDescription}
-          className="mb-4 bg-transparent"
-          placeholder="Descripción de la tarea"
-        />
-
-        <div className="flex flex-row w-full mt-8 space-x-4">
-          <div className="flex flex-col w-1/3">
-            <label className="block mb-2" htmlFor="status">
-              Estado:
-            </label>
-            <select
-              id="status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {Object.entries(statusOptions).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {value}
-                </option>
-              ))}
-            </select>
+        <div className="flex flex-row">
+          <div className="flex flex-col w-2/3 pr-4">
+            <h2 className="text-xl font-bold mb-4">Crear nueva tarea</h2>
+            <input
+              type="text"
+              value={taskName}
+              onChange={(e) => setTaskName(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Nombre de la tarea"
+            />
+            <ReactQuill
+              value={taskDescription}
+              onChange={setTaskDescription}
+              className="mb-4 bg-transparent"
+              placeholder="Descripción de la tarea"
+            />
           </div>
-          <div className="flex flex-col w-1/3">
-            <label htmlFor="priority" className="block mb-2">
-              Prioridad:
-            </label>
-            <select
-              id="priority"
-              value={priority}
-              onChange={(e) => setPriority(Number(e.target.value))}
-              className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {[1, 2, 3, 4, 5].map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex flex-col w-1/3">
-            <label htmlFor="story_points" className="block mb-2">
-              Puntuación:
-            </label>
-            <select
-              id="story_points"
-              value={story_points}
-              onChange={(e) => setStoryPoints(Number(e.target.value))}
-              className="w-full p-2 border border-gray-300 rounded-md mb-4 bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {[1, 2, 3, 4, 5].map((num) => (
-                <option key={num} value={num}>
-                  {num}
-                </option>
-              ))}
-            </select>
+          <div className="flex flex-col w-1/3 space-y-4">
+            <div className="flex flex-col">
+              <label className="block mb-2 font-semibold" htmlFor="status">
+                Estado:
+              </label>
+              <select
+                id="status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded-md bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {Object.entries(statusOptions).map(([key, value]) => (
+                  <option key={key} value={key}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="priority" className="block mb-2 font-semibold">
+                Prioridad:
+              </label>
+              <select
+                id="priority"
+                value={priority}
+                onChange={(e) => setPriority(Number(e.target.value))}
+                className="w-full p-2 border border-gray-300 rounded-md bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="story_points"
+                className="block mb-2 font-semibold"
+              >
+                Puntuación:
+              </label>
+              <select
+                id="story_points"
+                value={story_points}
+                onChange={(e) => setStoryPoints(Number(e.target.value))}
+                className="w-full p-2 border border-gray-300 rounded-md bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+              <label
+                htmlFor="collaborators"
+                className="block mb-2 font-semibold"
+              >
+                Asignar:
+              </label>
+              {/* <select id="colaborators" value={}></select> */}
+            </div>
           </div>
         </div>
-
         <div className="flex items-center justify-between mt-8">
           <button
             onClick={onClose}

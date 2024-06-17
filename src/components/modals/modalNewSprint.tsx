@@ -4,7 +4,7 @@ import React, { FC, useState } from "react";
 interface ModalNewSprintProps {
   isVisible: boolean;
   onClose: () => void;
-  onSave: (name: string, goal: string) => void;
+  onSave: (name: string, goal: string | null) => void;
 }
 
 const ModalNewSprint: FC<ModalNewSprintProps> = ({

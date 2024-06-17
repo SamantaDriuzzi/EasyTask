@@ -39,8 +39,22 @@ export const getMyTeams = async (id: string) => {
       },
     });
     const data = await response.json();
-    console.log("equiposss", data);
     return data;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};
+
+export const getUserByTeamId = async (team_id: string) => {
+  try {
+    const response = await fetch(`${API_URL}/teams/users/${team_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    return data.team_users;
   } catch (error: any) {
     throw new Error(error);
   }

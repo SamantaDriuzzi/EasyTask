@@ -2,7 +2,7 @@ import { Task } from "./interface-task";
 
 export interface SprintData {
   name: string;
-  goal: string;
+  goal: string | null;
   status: string;
 }
 

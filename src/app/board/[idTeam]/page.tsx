@@ -29,10 +29,11 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
   useEffect(() => {
     setTeamID(params.idTeam);
   }, [params.idTeam]);
-  console.log("teamID:--------", teamID);
 
   const [sprints, setSprints] = useState<Sprint[]>([]);
-  const [idSprint, setIdSprint] = useState<string | null>(null);
+  const [idSprint, setIdSprint] = useState<string | null>(
+    sprints[0]?.sprint_id || null
+  );
   const [modalSprintVisible, setModalSprintVisible] = useState<boolean>(false);
   const [modalTaskVisible, setModalTaskVisible] = useState<{
     isOpen: boolean;
@@ -51,7 +52,6 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
       if (teamID) {
         try {
           const sprintData = await getAllSprintByTeam(teamID);
-          console.log("Sprint DATA, useEffect::: ", sprintData);
           if (Array.isArray(sprintData)) {
             setSprints(sprintData);
           }
@@ -63,7 +63,7 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
     fetchSprints();
   }, [teamID]);
 
-  const handleSaveSprint = async (name: string, goal: string) => {
+  const handleSaveSprint = async (name: string, goal: string|null) => {
     if (teamID) {
       try {
         const newSprint = await postNewSprint(teamID, {
@@ -71,7 +71,6 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
           goal,
           status: "In progress",
         });
-        console.log("NEW SPRINT ---> ", newSprint);
         setSprints([...sprints, newSprint]);
         setModalSprintVisible(false);
       } catch (error) {
@@ -84,7 +83,6 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
 
   const handleSprintClick = async (sprintId: string) => {
     setIdSprint(sprintId);
-    console.log("sprintId:--------🧨🎄", sprintId);
 
     try {
       const tasksData = await getTasksBySprint(sprintId);
