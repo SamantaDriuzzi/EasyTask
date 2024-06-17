@@ -133,7 +133,7 @@ const TeamManagement = () => {
                 <ul>
                   {team.team_users.map((member) => (
                     <li key={member.user_id}>
-                      {member.name} ({member.email})
+                      {member.name} {member.email}
                       <button
                         onClick={() =>
                           handleRemoveCollaborator(team.team_id, member.user_id)
@@ -186,7 +186,7 @@ const TeamManagement = () => {
             <ul>
               {searchResults.map((user) => (
                 <li key={user.user_id}>
-                  {user.name} ({user.email})
+                  {user.name} {user.email}
                   <button
                     onClick={() => handleAddCollaborator(user.user_id)}
                     className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 ml-2"
