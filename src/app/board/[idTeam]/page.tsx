@@ -24,17 +24,12 @@ const initialTasks: {
   done: [],
 };
 
-const Board = ({ params }: { params: { id: string } }) => {
-  const [isBrowser, setIsBrowser] = useState(false);
+const Board = ({ params }: { params: { idTeam: string } }) => {
+  const [teamID, setTeamID] = useState<string | null>(null);
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsBrowser(true);
-    }
-  }, []);
-
-  const [teamID, setTeamID] = useState<string | null>(
-    "86c4aef1-c387-4273-90df-91fd77731021"
-  );
+    setTeamID(params.idTeam);
+  }, [params.idTeam]);
+  console.log("teamID:--------", teamID);
 
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [idSprint, setIdSprint] = useState<string | null>(null);
@@ -56,9 +51,12 @@ const Board = ({ params }: { params: { id: string } }) => {
       if (teamID) {
         try {
           const sprintData = await getAllSprintByTeam(teamID);
-          setSprints(sprintData);
+          console.log("Sprint DATA, useEffect::: ", sprintData);
+          if (Array.isArray(sprintData)) {
+            setSprints(sprintData);
+          }
         } catch (error) {
-          console.log("error para obtener sprints", error);
+          console.log("Error fetching sprints:", error);
         }
       }
     };
@@ -73,6 +71,7 @@ const Board = ({ params }: { params: { id: string } }) => {
           goal,
           status: "In progress",
         });
+        console.log("NEW SPRINT ---> ", newSprint);
         setSprints([...sprints, newSprint]);
         setModalSprintVisible(false);
       } catch (error) {
@@ -85,6 +84,8 @@ const Board = ({ params }: { params: { id: string } }) => {
 
   const handleSprintClick = async (sprintId: string) => {
     setIdSprint(sprintId);
+    console.log("sprintId:--------🧨🎄", sprintId);
+
     try {
       const tasksData = await getTasksBySprint(sprintId);
       const organizedTasks = {
@@ -98,7 +99,7 @@ const Board = ({ params }: { params: { id: string } }) => {
       setTasks(organizedTasks);
       setSelectedSprint(sprintId);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      console.error("Error fetching tasks for sprint:", sprintId, error);
     }
   };
 
@@ -137,7 +138,7 @@ const Board = ({ params }: { params: { id: string } }) => {
         console.error("Error creating task:", error);
       }
     } else {
-      console.error("ID Sprint | Team ID is not available");
+      console.error("ID Sprint or Team ID is not available");
       setModalTaskVisible({ isOpen: false, selectedTask: null });
     }
   };
@@ -168,37 +169,9 @@ const Board = ({ params }: { params: { id: string } }) => {
       setTasks(updatedArrayTasks);
       setModalTaskVisible({ isOpen: false, selectedTask: null });
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      console.error("Error updating task:", error);
       setModalTaskVisible({ isOpen: false, selectedTask: null });
     }
-  };
-
-  const moveTask = (taskId: string, targetStatus: keyof typeof tasks) => {
-    const sourceStatus = Object.keys(tasks).find((status) =>
-      tasks[status as keyof typeof tasks].some(
-        (task) => task.task_id === taskId
-      )
-    ) as keyof typeof tasks | undefined;
-
-    if (!sourceStatus) return;
-
-    const task = tasks[sourceStatus].find((task) => task.task_id === taskId);
-
-    if (!task) return;
-
-    const updatedSourceTasks = tasks[sourceStatus].filter(
-      (task) => task.task_id !== taskId
-    );
-    const updatedTargetTasks = [
-      ...tasks[targetStatus],
-      { ...task, status: targetStatus },
-    ];
-
-    setTasks({
-      ...tasks,
-      [sourceStatus]: updatedSourceTasks,
-      [targetStatus]: updatedTargetTasks,
-    });
   };
 
   return (
@@ -249,52 +222,57 @@ const Board = ({ params }: { params: { id: string } }) => {
             AGREGAR
           </button>
         </div>
-        {isBrowser ? (
-          <div className="flex flex-row w-full">
-            {tasks &&
-              Object.entries(tasks).map(([columnId, columnTasks]) => (
-                <div
-                  key={columnId}
-                  className="w-1/5 bg-white border border-gray-300 rounded-lg shadow-md p-4 flex flex-col mx-2"
-                >
-                  <h2 className="text-center text-lg font-bold mb-2">
-                    {columnId.toUpperCase()}
-                  </h2>
-                  <div className="h-96 border border-gray-300 rounded-lg p-2 flex flex-col justify-between">
-                    {columnTasks.map((task) => (
-                      <div
-                        key={task.task_id}
-                        className="bg-white p-4 rounded-md shadow-md mb-4 cursor-pointer"
+
+        <div className="flex flex-row w-full">
+          {tasks &&
+            Object.entries(tasks).map(([columnId, columnTasks]) => (
+              <div
+                key={columnId}
+                className="w-1/5 bg-white border border-gray-300 rounded-lg shadow-md p-4 flex flex-col mx-2"
+              >
+                <h2 className="text-center text-lg font-bold mb-2">
+                  {columnId === "open"
+                    ? "POR HACER"
+                    : columnId === "inProgress"
+                    ? "EN PROGRESO"
+                    : columnId === "testing"
+                    ? "EN PRUEBAS"
+                    : "TERMINADO"}
+                </h2>
+                <div className="h-96 border border-gray-300 rounded-lg p-2 flex flex-col justify-between">
+                  {columnTasks.map((task) => (
+                    <div
+                      key={task.task_id}
+                      className="bg-white p-4 rounded-md shadow-md mb-4 cursor-pointer"
+                      onClick={() =>
+                        setModalTaskVisible({
+                          isOpen: true,
+                          selectedTask: task,
+                        })
+                      }
+                    >
+                      <p>{task.name}</p>
+                    </div>
+                  ))}
+                  {columnId === "open" && (
+                    <div className="mt-4">
+                      <button
                         onClick={() =>
                           setModalTaskVisible({
                             isOpen: true,
-                            selectedTask: task,
+                            selectedTask: null,
                           })
                         }
+                        className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg"
                       >
-                        <p>{task.name}</p>
-                      </div>
-                    ))}
-                    {columnId === "open" && (
-                      <div className="mt-4">
-                        <button
-                          onClick={() =>
-                            setModalTaskVisible({
-                              isOpen: true,
-                              selectedTask: null,
-                            })
-                          }
-                          className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg"
-                        >
-                          + AGREGAR
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                        + AGREGAR
+                      </button>
+                    </div>
+                  )}
                 </div>
-              ))}
-          </div>
-        ) : null}
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );
