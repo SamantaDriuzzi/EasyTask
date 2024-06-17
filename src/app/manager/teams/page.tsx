@@ -34,7 +34,7 @@ const TeamManagement = () => {
     fetchTeams();
   }, []);
 
-  const fetchTeams = async () => {
+  const fetchTeams = async (searchTerm: string = "") => {
     try {
       const allTeams = await getTeams();
       setTeams(allTeams);

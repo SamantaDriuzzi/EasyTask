@@ -60,8 +60,8 @@ export const addCollaborator = async (teamId: string, userId: string) => {
 };
 
 export const removeCollaborator = async (teamId: string, userId: string) => {
-  const response = await fetch(`${API_URL}/teams/${teamId}/users/${userId}`, {
-    method: "DELETE",
+  const response = await fetch(`${API_URL}/teams/${teamId}/${userId}`, {
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
