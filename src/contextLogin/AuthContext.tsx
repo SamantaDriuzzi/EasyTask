@@ -52,17 +52,18 @@ export const AuthProvider = ({ children }: any) => {
     }
 
     const userSession = localStorage.getItem("userSession");
-
+    console.log("userSession:-------------", userSession);
     if (!userSession) {
       return null;
     }
 
     try {
-      const token = JSON.parse(userSession).token.token;
+      const token = JSON.parse(userSession).token;
       if (!token) {
         return null;
       }
       const decodedToken = jwtDecode<JwtPayload>(token);
+      console.log("id del token decodificado:-------------", decodedToken.id);
       return decodedToken.id;
     } catch (error) {
       console.error("Failed to decode token", error);
