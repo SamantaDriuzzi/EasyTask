@@ -1,11 +1,26 @@
+"use client"
 import ChatButton from "@/components/ChatButton";
 import { getMyTeams } from "@/helpers/teams/get";
-
 import { Team } from "@/utils/types/interface-team";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const MyTeams = async ({ params }: { params: { id: string } }) => {
-  const teams = await getMyTeams(params.id);
+const MyTeams = ({ params }: { params: { id: string } }) => {
+  const [teams, setTeams] = useState<{ leaderTeams: Team[], collaboratorTeams: Team[] } | null>(null);
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const fetchedTeams = await getMyTeams(params.id);
+        setTeams(fetchedTeams);
+      } catch (error) {
+        console.error("Error fetching teams:", error);
+        setTeams({ leaderTeams: [], collaboratorTeams: [] }); // Set empty arrays or handle error state
+      }
+    };
+
+    fetchTeams();
+  }, [params.id]);
+
   return (
     <div className="">
       <div className="max-w-8xl mx-auto mt-20">
@@ -37,7 +52,7 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
                 ))
               ) : (
                 <div className="mb-12 p-4 bg-white text-black rounded-md">
-                  <h4 className="font-bold">Aún no hay equipos por aquí</h4>
+                  <h4 className="font-bold">Cargando equipos...</h4>
                   <p></p>
                 </div>
               )}
@@ -65,7 +80,7 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
                 ))
               ) : (
                 <div className="mb-12 p-4 bg-white text-black rounded-md">
-                  <h4 className="font-bold">Aún no hay equipos por aquí</h4>
+                  <h4 className="font-bold">Cargando equipos...</h4>
                   <p></p>
                 </div>
               )}
