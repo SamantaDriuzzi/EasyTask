@@ -63,13 +63,13 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
     fetchSprints();
   }, [teamID]);
 
-  const handleSaveSprint = async (name: string, goal: string|null) => {
+  const handleSaveSprint = async (name: string, goal: string) => {
     if (teamID) {
       try {
         const newSprint = await postNewSprint(teamID, {
           name,
-          goal,
-          status: "In progress",
+          goal: goal?.length ? goal : null,
+          status: "inProgress",
         });
         setSprints([...sprints, newSprint]);
         setModalSprintVisible(false);

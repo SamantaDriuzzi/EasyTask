@@ -4,7 +4,7 @@ import React, { FC, useState } from "react";
 interface ModalNewSprintProps {
   isVisible: boolean;
   onClose: () => void;
-  onSave: (name: string, goal: string | null) => void;
+  onSave: (name: string, goal: string) => void;
 }
 
 const ModalNewSprint: FC<ModalNewSprintProps> = ({
@@ -12,8 +12,8 @@ const ModalNewSprint: FC<ModalNewSprintProps> = ({
   onClose,
   onSave,
 }) => {
-  const [sprintName, setSprintName] = useState("");
-  const [sprintGoal, setSprintGoal] = useState("");
+  const [sprintName, setSprintName] = useState<string>("");
+  const [sprintGoal, setSprintGoal] = useState<string>("");
 
   const handleSave = () => {
     if (sprintName) {

@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }: any) => {
     }
 
     const userSession = localStorage.getItem("userSession");
-    console.log("userSession:-------------", userSession);
     if (!userSession) {
       return null;
     }
@@ -80,7 +79,6 @@ export const AuthProvider = ({ children }: any) => {
         return null;
       }
       const decodedToken = jwtDecode<JwtPayload>(token);
-      console.log("id del token decodificado:-------------", decodedToken.id);
       return decodedToken.id;
     } catch (error) {
       console.error("Failed to decode token", error);
