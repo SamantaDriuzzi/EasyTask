@@ -22,8 +22,8 @@ export async function POST(request) {
                 },
             ],
             mode: "payment",
-            success_url: "http://localhost:3000/donations/success",
-            cancel_url: "http://localhost:3000/donations/cancel",
+            success_url: "https://easy-task-cyan.vercel.app/donations/success",
+            cancel_url: "https://easy-task-cyan.vercel.app/donations/cancel",
         });
 
         return NextResponse.json({ url: session.url });
