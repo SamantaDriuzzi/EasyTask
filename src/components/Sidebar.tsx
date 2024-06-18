@@ -21,7 +21,7 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
-          <Link href="https://donate.stripe.com/test_9AQ6oFfi1ezI5pufYY">
+          <Link href="/manager/donations">
             <div className="flex items-center text-lg font-semibold text-gray-700 hover:text-gray-900">
               <FaHeart className="mr-2" /> Donaciones
             </div>
