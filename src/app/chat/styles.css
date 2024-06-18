@@ -1,51 +1,38 @@
 /* styles.css */
 
-/* Estilo para que el chat ocupe el alto completo de la pantalla */
-main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    height: 100vh; /* Esto hace que main ocupe todo el alto de la ventana */
-  }
-  
-  /* Estilo para hacer que los elementos dentro de main se expandan para ocupar el espacio disponible */
-  main > div {
-    flex: 1; /* Esto hace que los elementos dentro de main se expandan para ocupar el espacio disponible */
-  }
-  
-  /* Estilo para el contenedor de mensajes con scroll */
-  .chat-messages {
-    flex-grow: 1; /* Esto asegura que el contenedor de mensajes se expanda para ocupar el espacio disponible */
-    background-color: #ffffff; /* Color de fondo del contenedor de mensajes */
-    padding: 1rem; /* Espaciado interno del contenedor de mensajes */
-    border-radius: 0.5rem; /* Borde redondeado del contenedor de mensajes */
-    overflow-y: auto; /* Habilita el scroll vertical cuando los mensajes exceden el tamaño */
-    max-height: 60vh; /* Altura máxima del contenedor de mensajes */
-  }
-  
-  /* Estilos para el input y el botón de enviar */
-  .chat-input {
-    display: flex;
-    align-items: center;
-    margin-top: 1rem;
-  }
-  
-  .chat-input input {
-    flex-grow: 1; /* El input ocupa todo el espacio disponible */
-    padding: 0.75rem; /* Espaciado interno del input */
-    border: 1px solid #ccc; /* Borde del input */
-    border-radius: 0.5rem; /* Borde redondeado del input */
-    font-size: 1rem; /* Tamaño de fuente del input */
-  }
-  
-  .chat-input button {
-    background-color: #6c63ff; /* Color de fondo del botón */
-    color: white; /* Color del texto del botón */
-    padding: 0.75rem; /* Espaciado interno del botón */
-    border: none; /* Quita el borde del botón */
-    border-radius: 50%; /* Hace que el botón sea redondeado */
-    cursor: pointer; /* Cambia el cursor al pasar por encima del botón */
-    margin-left: 0.5rem; /* Margen a la izquierda del botón */
-  }
-  
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.friend-info {
+  display: flex;
+  align-items: center;
+}
+
+.chat-messages {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+}
+
+.self-start {
+  align-self: flex-start;
+}
+
+.self-end {
+  align-self: flex-end;
+}
+
+.bg-blue-100 {
+  background-color: #dbeafe; /* Color para los mensajes enviados */
+}
+
+.bg-gray-100 {
+  background-color: #f3f4f6; /* Color para los mensajes recibidos */
+}

@@ -4,11 +4,13 @@ import Image from "next/image";
 import socket from "./socket";
 import { useAuth } from "@/contextLogin/AuthContext";
 import styles from "./styles.css"; // Asegúrate de tener este archivo CSS en tu proyecto
-import { getAmiwis, getUserById } from "@/helpers/chat/get";
 import { User } from "@/utils/types/interface-user";
+import { Message } from "@/utils/types/interface-message";
+import { getAmiwis, getUserById } from "@/helpers/chat/get";
+import { getMessages, sendMessage } from "@/helpers/chat/messages";
 
 const Chat = () => {
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState("");
     const [selectedFriend, setSelectedFriend] = useState<User | null>(null);
     const [user, setUser] = useState<User | null>(null);
@@ -29,22 +31,45 @@ const Chat = () => {
     }, [id]);
 
     useEffect(() => {
-        socket.on("message", (message) => {
-            setMessages((prevMessages) => [...prevMessages, message]);
-        });
+        const handleMessage = (message: Message) => {
+            console.log("Message received:", message);
+            setMessages((prevMessages) => [message, ...prevMessages]);
+        };
+
+        socket.on("message", handleMessage);
 
         return () => {
-            socket.off("message");
+            socket.off("message", handleMessage);
         };
     }, []);
 
-    const handleSend = () => {
-        if (input.trim()) {
-            // Emitir el mensaje al servidor
-            socket.emit("message", input);
-            // Añadir el mensaje al estado local para visualizarlo inmediatamente
-            setMessages((prevMessages) => [...prevMessages, input]);
+    useEffect(() => {
+        console.log("Current messages state:", messages);
+    }, [messages]);
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            if (selectedFriend) {
+                const fetchedMessages = await getMessages(selectedFriend.user_id);
+                setMessages(fetchedMessages);
+            }
+        };
+        fetchMessages();
+    }, [selectedFriend]);
+
+    const handleSend = async () => {
+        if (input.trim() && user && selectedFriend) {
+            // Envía el mensaje al servidor
+            const message = await sendMessage(user.user_id, selectedFriend.user_id, input);
+            // Añade el mensaje al estado local para visualizarlo inmediatamente
+            setMessages((prevMessages) => [...prevMessages, message]);
             setInput("");
+            // Emite el mensaje a través del socket
+            socket.emit("sendMessage", {
+                senderId: user.user_id,
+                receiverId: selectedFriend.user_id,
+                content: input,
+            });
         }
     };
 
@@ -122,9 +147,16 @@ const Chat = () => {
                             <div
                                 className={`flex-grow bg-white p-4 rounded-md overflow-y-auto ${styles["chat-messages"]}`}
                             >
-                                {messages.map((message, index) => (
-                                    <div key={index} className="p-4 my-2 bg-gray-100 rounded-md">
-                                        {message}
+                                {messages.map((message) => (
+                                    <div
+                                        key={message.id}
+                                        className={`p-4 my-2 rounded-md ${
+                                            message.sender.user_id === user?.user_id
+                                                ? "bg-blue-100 self-end"
+                                                : "bg-gray-100 self-start"
+                                        }`}
+                                    >
+                                        {message.content}
                                     </div>
                                 ))}
                             </div>
