@@ -1,9 +1,18 @@
 "use client";
 
+import postUserGoogle from "@/helpers/users/post";
+import { getMyTeams } from "@/helpers/teams/get";
 import { JwtPayload } from "@/utils/types/interface-auth";
+import { Team } from "@/utils/types/interface-team";
 import { jwtDecode } from "jwt-decode";
 import { signOut, useSession } from "next-auth/react";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 interface AuthContextProps {
   user: any;
@@ -11,6 +20,10 @@ interface AuthContextProps {
   validateUserSession: () => boolean | null;
   userIdFromToken: () => string | null;
   handleSignOut: () => void;
+  teamID: string | null;
+  setTeamID: (id: string | null) => void;
+  teams: Team[];
+  fetchTeams: () => void;
 }
 const AuthContext = createContext<AuthContextProps>({
   user: null,
@@ -18,15 +31,28 @@ const AuthContext = createContext<AuthContextProps>({
   validateUserSession: () => null,
   userIdFromToken: () => null,
   handleSignOut: () => {},
+  teamID: null,
+  setTeamID: () => {},
+  teams: [],
+  fetchTeams: () => {},
 });
 
 export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<any>(null);
   const { data: session, status } = useSession();
+  const [teamID, setTeamID] = useState<string | null>(null);
+  const [teams, setTeams] = useState<Team[]>([]);
 
   useEffect(() => {
     if (status === "authenticated" && session) {
-      localStorage.setItem("user", JSON.stringify(session.user));
+      postUserGoogle(session.user)
+        .then((data) => {
+          const { token } = data;
+          localStorage.setItem("userSession", JSON.stringify({ token: token }));
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
     }
   }, [status, session]);
 
@@ -37,20 +63,18 @@ export const AuthProvider = ({ children }: any) => {
     window.location.href = "/login";
   };
 
-  const userIdFromToken = () => {
+  const userIdFromToken = useCallback(() => {
     if (typeof window === "undefined") {
-      // Estamos en el servidor, no se puede usar localStorage
       return null;
     }
 
     const userSession = localStorage.getItem("userSession");
-
     if (!userSession) {
       return null;
     }
 
     try {
-      const token = JSON.parse(userSession).token.token;
+      const token = JSON.parse(userSession).token;
       if (!token) {
         return null;
       }
@@ -60,7 +84,24 @@ export const AuthProvider = ({ children }: any) => {
       console.error("Failed to decode token", error);
       return null;
     }
-  };
+  }, []);
+
+  const fetchTeams = useCallback(async () => {
+    const id = userIdFromToken();
+    if (id) {
+      const response = await getMyTeams(id);
+      const combinedTeams = [
+        ...response.leaderTeams,
+        ...response.collaboratorTeams,
+      ];
+      setTeams(combinedTeams);
+    }
+  }, [userIdFromToken]);
+
+  useEffect(() => {
+    fetchTeams();
+  }, [fetchTeams]);
+
   const validateUserSession = () => {
     if (typeof window !== "undefined") {
       const userSession = localStorage.getItem("userSession");
@@ -77,6 +118,10 @@ export const AuthProvider = ({ children }: any) => {
         validateUserSession,
         userIdFromToken,
         handleSignOut,
+        teamID,
+        setTeamID,
+        teams,
+        fetchTeams,
       }}
     >
       {children}
