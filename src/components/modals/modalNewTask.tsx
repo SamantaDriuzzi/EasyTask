@@ -5,11 +5,14 @@ import { Task, TaskData } from "@/utils/types/interface-task";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
+import { getCollaboratorsByTeamId } from "@/helpers/teams/get";
+import { Collaborator } from "@/utils/types/interface-user";
 
 interface ModalNewTaskProps {
   isVisible: { isOpen: boolean; selectedTask: Task | null };
   onClose: () => void;
   onSave: (task: TaskData, taskId: string | null) => void;
+  idTeam: string;
 }
 
 const statusOptions = {
@@ -23,14 +26,32 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
   isVisible,
   onClose,
   onSave,
+  idTeam,
 }) => {
   const [taskName, setTaskName] = useState("");
   const [taskDescription, setTaskDescription] = useState("");
   const [status, setStatus] = useState("open");
   const [priority, setPriority] = useState<number>(1);
   const [story_points, setStoryPoints] = useState<number>(1);
-
+  const [collaboratorList, setCollaboratorList] = useState<Collaborator[]>([]);
+  const [userOwner, setUserOwner] = useState<string>(
+    isVisible?.selectedTask?.user_owner
+      ? isVisible.selectedTask.user_owner.user_id
+      : ""
+  );
   const { selectedTask } = isVisible;
+
+  useEffect(() => {
+    const fetchCollaborators = async () => {
+      if (!collaboratorList.length) {
+        const collaborators = await getCollaboratorsByTeamId(idTeam);
+        if (Array.isArray(collaborators)) {
+          setCollaboratorList(collaborators);
+        }
+      }
+    };
+    fetchCollaborators();
+  }, [idTeam, collaboratorList]);
 
   const handleTaskToEdit = useCallback(async () => {
     if (selectedTask?.task_id) {
@@ -54,9 +75,14 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
         status,
         priority,
         story_points,
+        user_owner: userOwner.length ? userOwner : null,
       };
       onSave(newTask, selectedTask?.task_id || null);
     }
+  };
+
+  const setCollaboratorId = (collaboratorId: string) => {
+    setUserOwner(collaboratorId);
   };
 
   if (!isVisible.isOpen) return null;
@@ -139,9 +165,25 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
                 htmlFor="collaborators"
                 className="block mb-2 font-semibold"
               >
-                Asignar:
+                Asignado:
               </label>
-              {/* <select id="colaborators" value={}></select> */}
+              <select
+                id="collaborators"
+                onChange={(event) => setCollaboratorId(event.target.value)}
+                className="bg-color5 text-gray-100 hover:text-white hover:underline transition duration-300"
+                defaultValue={userOwner}
+              >
+                <option value="">Sin asignar</option>
+                {collaboratorList.map((collaborator: Collaborator) => (
+                  <option
+                    key={collaborator.user_id}
+                    value={collaborator.user_id}
+                    selected={collaborator.user_id === userOwner}
+                  >
+                    {collaborator.name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

@@ -11,6 +11,8 @@ import ModalNewSprint from "@/components/modals/modalNewSprint";
 import { postNewTask } from "@/helpers/task/post";
 import { putTask } from "@/helpers/task/put";
 import { Sprint } from "@/utils/types/interface-sprint";
+import { getTeamById } from "@/helpers/teams/get";
+import { Team } from "@/utils/types/interface-team";
 
 const initialTasks: {
   open: Task[];
@@ -29,7 +31,7 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
   useEffect(() => {
     setTeamID(params.idTeam);
   }, [params.idTeam]);
-
+  const [team, setTeam] = useState<Team>();
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [idSprint, setIdSprint] = useState<string | null>(
     sprints[0]?.sprint_id || null
@@ -48,12 +50,32 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
   }>(initialTasks);
 
   useEffect(() => {
+    if (teamID) {
+      const fetchTeamInfo = async () => {
+        try {
+          const teamInfo = await getTeamById(teamID);
+          setTeam(teamInfo);
+          console.log("info del equipo:   ::::::", teamInfo);
+        } catch (error) {
+          console.error("Error fetching team info:", error);
+        }
+      };
+
+      fetchTeamInfo();
+    }
+  }, [teamID]);
+
+  useEffect(() => {
     const fetchSprints = async () => {
       if (teamID) {
         try {
           const sprintData = await getAllSprintByTeam(teamID);
+          console.log(sprintData);
           if (Array.isArray(sprintData)) {
             setSprints(sprintData);
+            if (sprintData.length > 0) {
+              handleSprintClick(sprintData[0].sprint_id);
+            }
           }
         } catch (error) {
           console.log("Error fetching sprints:", error);
@@ -181,20 +203,24 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
       />
       <ModalNewTask
         isVisible={modalTaskVisible}
+        idTeam={params.idTeam}
         onClose={() =>
           setModalTaskVisible({ isOpen: false, selectedTask: null })
         }
         onSave={createOrUpdateTask}
       />
 
-      <div className="bg-[#B4B3EA] py-10">
+      <div className="bg-[#B4B3EA] py-8">
         <h1 className="text-2xl font-bold text-left text-black ml-6 mt-14">
-          Tablero
+          Tablero equipo: {team && team.team_name}
         </h1>
+        <h3 className="font-semibold text-left text-black ml-6">
+          Lider: {team && team.team_leader.name}
+        </h3>
       </div>
 
-      <div className="flex flex-row p-6">
-        <div className="w-1/5 bg-white border border-gray-300 rounded-lg shadow-md p-4 mr-4">
+      <div className="flex flex-row p-6 ">
+        <div className="w-1/5 bg-white  bg-opacity-50 border border-gray-300 rounded-lg shadow-md p-4 mr-4">
           <h2 className="text-lg font-bold mb-4">Sprints</h2>
           <div className="mt-6 flex flex-col">
             {sprints.length > 0
@@ -202,10 +228,10 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
                   <button
                     key={sprint.sprint_id}
                     onClick={() => handleSprintClick(sprint.sprint_id)}
-                    className={`py-2 px-4 mb-2 rounded-lg cursor-pointer text-white ${
+                    className={`py-2 px-4 mb-2 rounded-lg cursor-pointer text-black ${
                       selectedSprint === sprint.sprint_id
-                        ? "bg-blue-500"
-                        : "bg-[#329FA6]"
+                        ? "bg-color10"
+                        : "bg-gray-300"
                     }`}
                   >
                     {sprint.name}
@@ -215,18 +241,18 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
           </div>
           <button
             onClick={() => setModalSprintVisible(true)}
-            className="w-full bg-color3 hover:bg-color4 text-black font-bold py-2 px-4 rounded-lg mb-4"
+            className="w-full mt-6 bg-color7 hover:bg-color1 text-black font-bold py-2 px-4 rounded-lg mb-4"
           >
             AGREGAR
           </button>
         </div>
 
-        <div className="flex flex-row w-full">
+        <div className="flex flex-row w-full justify-evenly">
           {tasks &&
             Object.entries(tasks).map(([columnId, columnTasks]) => (
               <div
                 key={columnId}
-                className="w-1/5 bg-white border border-gray-300 rounded-lg shadow-md p-4 flex flex-col mx-2"
+                className="w-1/5 bg-color10 border border-gray-300 rounded-lg shadow-md p-4 flex flex-col"
               >
                 <h2 className="text-center text-lg font-bold mb-2">
                   {columnId === "open"
@@ -237,7 +263,7 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
                     ? "EN PRUEBAS"
                     : "TERMINADO"}
                 </h2>
-                <div className="h-96 border border-gray-300 rounded-lg p-2 flex flex-col justify-between">
+                <div className="h-96 border border-gray-300 rounded-lg p-2 flex flex-col justify-start">
                   {columnTasks.map((task) => (
                     <div
                       key={task.task_id}
@@ -261,7 +287,12 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
                             selectedTask: null,
                           })
                         }
-                        className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg"
+                        disabled={!selectedSprint}
+                        className={`w-full ${
+                          selectedSprint
+                            ? "bg-gray-200 hover:bg-gray-300"
+                            : "bg-gray-400 cursor-not-allowed"
+                        } text-gray-700 font-bold py-2 px-4 rounded-lg`}
                       >
                         + AGREGAR
                       </button>

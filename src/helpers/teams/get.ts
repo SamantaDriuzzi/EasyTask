@@ -45,7 +45,7 @@ export const getMyTeams = async (id: string) => {
   }
 };
 
-export const getUserByTeamId = async (team_id: string) => {
+export const getCollaboratorsByTeamId = async (team_id: string) => {
   try {
     const response = await fetch(`${API_URL}/teams/users/${team_id}`, {
       method: "GET",

@@ -11,6 +11,7 @@ export interface Task {
   priority: number;
   story_points: number;
   collaborators: User[];
+  user_owner: User;
 }
 
 export interface TaskData {
@@ -19,4 +20,5 @@ export interface TaskData {
   status: string;
   priority: number;
   story_points: number;
+  user_owner: string | null;
 }
