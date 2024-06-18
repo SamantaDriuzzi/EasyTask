@@ -66,6 +66,7 @@ const Register = () => {
             },
             body: JSON.stringify(form),
           }).then((response) => {
+            console.log("Response register:", response);
             return response.json();
           });
 

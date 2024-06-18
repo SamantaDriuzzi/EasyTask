@@ -10,7 +10,7 @@ import ModalInviteCode from "@/components/modals/modalInviteCode";
 import ChatButton from "@/components/ChatButton";
 
 const CreateTeam = ({ params }: { params: { id: string } }) => {
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>("");
   const [user, setUser] = useState<User | null>(null);
   const [teamData, setTeamData] = useState<TeamCrate>({
     team_name: "",
@@ -73,6 +73,7 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
           created_date: new Date(),
           finish_date: new Date(),
         });
+        console.log("id del equipo creado", response.team_id);
         alert("Equipo creado correctamente ✅");
         setModalVisible(true);
       } else {
