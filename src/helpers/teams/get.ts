@@ -45,3 +45,17 @@ export const getMyTeams = async (id: string) => {
   }
 };
 
+export const getCollaboratorsByTeamId = async (team_id: string) => {
+  try {
+    const response = await fetch(`${API_URL}/teams/users/${team_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    return data.team_users;
+  } catch (error: any) {
+    throw new Error(error);
+  }
+};

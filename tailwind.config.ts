@@ -18,6 +18,7 @@ const config: Config = {
         color7: "#5F98DF",
         color8: "#CD9AE4",
         color9: "#1C1C1C",
+        color10: "#e1baf5",
         grey: "#CCCCCC",
         white: "#FFFFFF",
         "blue-dark": "#1e3a8a",
