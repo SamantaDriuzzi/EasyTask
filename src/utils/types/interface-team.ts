@@ -1,3 +1,5 @@
+import { User } from "./interface-user";
+
 export interface Team {
   team_id: string;
   team_name: string;
@@ -5,7 +7,7 @@ export interface Team {
   created_date: Date;
   finish_date: Date;
   invitation_code: string;
-  team_leader: string;
+  team_leader: User;
   team_users: string[];
   sprints: null;
   tasks: string[];

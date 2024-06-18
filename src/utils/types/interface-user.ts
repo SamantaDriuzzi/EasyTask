@@ -1,3 +1,11 @@
+interface Credential {
+  id: number;
+  nickname: string;
+  email: string;
+  password: string;
+  user: string;
+}
+
 export interface User {
   user_id: string;
   token: string;
@@ -9,11 +17,10 @@ export interface User {
   tasks: string[];
   teams: string[];
   deletedAt: Date;
-  credentials: {
-    id: number;
-    nickname: string;
-    email: string;
-    password: string;
-    user: string;
-  };
+  credentials: Credential;
+}
+
+export interface Collaborator {
+  name: string;
+  user_id: string;
 }
