@@ -55,11 +55,11 @@ const UserDashboard = () => {
           <ul>
             <li className="flex items-center mb-4">
               <FontAwesomeIcon icon={faUser} className="mr-2" />
-              <Link href="#">Mi cuenta</Link>
+              <Link href="/userdashboard">Mi cuenta</Link>
             </li>
             <li className="flex items-center">
               <FontAwesomeIcon icon={faHeart} className="mr-2" />
-              <Link href="#">Mis Donaciones</Link>
+              <Link href="/userdashboard/my-donations">Mis Donaciones</Link>
             </li>
           </ul>
         </aside>
