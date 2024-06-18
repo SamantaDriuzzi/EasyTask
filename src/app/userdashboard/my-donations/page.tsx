@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
+import SidebarUser from "@/components/SidebarUser/SidebarUser";
 import React, { useState } from "react";
-import Sidebar from "@/components/Sidebar";
 
 const MyDonations = () => {
   const [donations, setDonations] = useState<
@@ -22,7 +22,7 @@ const MyDonations = () => {
 
   return (
     <div className="min-h-screen bg-gray-200 flex">
-      <Sidebar />
+      <SidebarUser />
       <main className="flex-1 p-20">
         <header className="flex justify-between items-center bg-[#B4B3EA] text-white p-4 rounded-md mb-4">
           <h1 className="text-xl font-semibold">Mis Donaciones</h1>
