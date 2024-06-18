@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import Stripe from "stripe";
-import { saveDonation } from '../../../helpers/donations/saveDonation';
+import { postNewDonation } from "@/helpers/donations/post";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -30,7 +30,7 @@ export async function POST(request) {
                 const donationDate = new Date(); 
 
                 // Guardar en la DB
-                await saveDonation(customerId, donationAmount, donationDate);
+                await postNewDonation(customerId, donationAmount, donationDate)
 
                 // Usuario como donante en la DB -endpoint
                

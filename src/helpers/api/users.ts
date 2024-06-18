@@ -1,7 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const getUsers = async () => {
-  const response = await fetch(${API_URL}/users, {
+  const response = await fetch(`${API_URL}/users`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -13,10 +13,7 @@ export const getUsers = async () => {
   }
 
   const data = await response.json();
-  console.log("API Response:", data);
-
   return data.map((user: any) => {
-    console.log("User:", user);
     return {
       user_id: user.user_id ?? "No ID",
       name: user.name,
@@ -29,7 +26,7 @@ export const getUsers = async () => {
 };
 
 export const getUserById = async (id: string) => {
-  const response = await fetch(${API_URL}/users/${id}, {
+  const response = await fetch(`${API_URL}/users/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +38,6 @@ export const getUserById = async (id: string) => {
   }
 
   const user = await response.json();
-  console.log("Fetched User:", user); // Verifica la respuesta de la API para un solo usuario
   return {
     user_id: user.user_id ?? "No ID",
     name: user.name,
@@ -53,8 +49,7 @@ export const getUserById = async (id: string) => {
 };
 
 export const deleteUser = async (id: string) => {
-  console.log("Deleting user with ID:", id); // Confirmar el ID antes de eliminar
-  const response = await fetch(${API_URL}/users/${id}, {
+  const response = await fetch(`${API_URL}/users/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
