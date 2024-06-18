@@ -1,5 +1,6 @@
 "use client";
 
+import postUserGoogle from "@/helpers/users/post";
 import { JwtPayload } from "@/utils/types/interface-auth";
 import { jwtDecode } from "jwt-decode";
 import { signOut, useSession } from "next-auth/react";
@@ -26,7 +27,14 @@ export const AuthProvider = ({ children }: any) => {
 
   useEffect(() => {
     if (status === "authenticated" && session) {
-      localStorage.setItem("user", JSON.stringify(session.user));
+      postUserGoogle(session.user)
+        .then((data) => {
+          const { token } = data;
+          localStorage.setItem("userSession", JSON.stringify({ token: token }));
+        })
+        .catch((error) => {
+          console.error("Error fetching user data:", error);
+        });
     }
   }, [status, session]);
 
@@ -44,17 +52,18 @@ export const AuthProvider = ({ children }: any) => {
     }
 
     const userSession = localStorage.getItem("userSession");
-
+    console.log("userSession:-------------", userSession);
     if (!userSession) {
       return null;
     }
 
     try {
-      const token = JSON.parse(userSession).token.token;
+      const token = JSON.parse(userSession).token;
       if (!token) {
         return null;
       }
       const decodedToken = jwtDecode<JwtPayload>(token);
+      console.log("id del token decodificado:-------------", decodedToken.id);
       return decodedToken.id;
     } catch (error) {
       console.error("Failed to decode token", error);
