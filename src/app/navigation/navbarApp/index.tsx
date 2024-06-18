@@ -1,14 +1,16 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import LogoutButton from "@/components/LogoutButton";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contextLogin/AuthContext";
+import { getMyTeams } from "@/helpers/teams/get";
+import { Team } from "@/utils/types/interface-team";
 
 const NavbarApp = () => {
   const router = useRouter();
-  const { userIdFromToken } = useAuth();
+  const { userIdFromToken, teams, fetchTeams } = useAuth();
   const id = userIdFromToken();
 
   const handleSelectChange = (event: { target: { value: any } }) => {
@@ -22,6 +24,8 @@ const NavbarApp = () => {
       handleJoinTeam();
     } else if (value === "infoTeam") {
       handleInfoTeam();
+    } else {
+      handleTeamBoard(value);
     }
   };
 
@@ -36,8 +40,12 @@ const NavbarApp = () => {
   };
   const handleInfoTeam = () => {
     router.push(`/info-team/${id}`);
-  }; 
-  
+  };
+
+  const handleTeamBoard = (teamId: string) => {
+    router.push(`/board/${teamId}`);
+  };
+
   return (
     <div className="w-full h-30 bg-color5 fixed top-0 p-4 z-20">
       <div className="flex flex-row justify-between items-center">
@@ -52,9 +60,22 @@ const NavbarApp = () => {
           >
             Inicio
           </Link>
-          <Link href="/" className="text-gray-100 hover:text-white hover:underline transition duration-300">
-            Tablero
-          </Link>
+
+          <select
+            onClick={fetchTeams}
+            onChange={(event) => handleTeamBoard(event.target.value)}
+            className="bg-color5 text-gray-100 hover:text-white hover:underline transition duration-300"
+            defaultValue=""
+          >
+            <option value="" disabled>
+              Tablero
+            </option>
+            {teams.map((team: Team) => (
+              <option key={team.team_id} value={team.team_id}>
+                {team.team_name}
+              </option>
+            ))}
+          </select>
           <select
             onChange={handleSelectChange}
             className="bg-color5 text-gray-100 hover:text-white hover:underline transition duration-300"
@@ -68,7 +89,10 @@ const NavbarApp = () => {
             <option value="joinTeam">Unirse a un equipo</option>
             <option value="infoTeam">Información de equipo</option>
           </select>
-          <Link href="/donations" className="text-gray-100 hover:text-white hover:underline transition duration-300">
+          <Link
+            href="/donations"
+            className="text-gray-100 hover:text-white hover:underline transition duration-300"
+          >
             Donaciones
           </Link>
         </nav>
