@@ -157,6 +157,7 @@ const UserDashboard = () => {
                       onChange={(e) => setNickname(e.target.value)}
                       className="flex-grow p-2 border border-gray-300 rounded-md"
                     />
+                    <Link href=""></Link>
                     <button
                       onClick={() => handleSave("nickname")}
                       className="ml-2 bg-blue-700 text-white p-2 rounded-md hover:bg-violet-400"
@@ -177,9 +178,11 @@ const UserDashboard = () => {
                   </div>
                 )}
               </div>
-              <button className="bg-teal-500 text-white p-2 rounded-md hover:bg-violet-400">
-                Cambiar contraseña
-              </button>
+              <Link href="/userdashboard/change-password">
+                <button className="bg-teal-500 text-white p-2 rounded-md hover:bg-violet-400">
+                  Cambiar contraseña
+                </button>
+              </Link>
             </div>
           </div>
         </section>
