@@ -8,10 +8,10 @@ export interface Team {
   finish_date: Date;
   invitation_code: string;
   team_leader: User;
-  team_users: string[];
+  team_users: User[];
   sprints: null;
   tasks: string[];
-  deletedAt: Date;
+  deletedAt: Date | null;
 }
 
 export interface TeamCrate {
