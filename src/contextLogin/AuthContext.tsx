@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }: any) => {
     await signOut({ redirect: false });
     localStorage.removeItem("user");
     localStorage.removeItem("userSession");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   const userIdFromToken = useCallback(() => {

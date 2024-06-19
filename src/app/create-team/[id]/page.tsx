@@ -1,13 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useAuth } from "@/contextLogin/AuthContext";
 import { TeamCrate } from "@/utils/types/interface-team";
 import { postCreateTeam } from "@/helpers/teams/post";
 import Image from "next/image";
 import { getUserById } from "@/helpers/users/get";
 import { User } from "@/utils/types/interface-user";
 import ModalInviteCode from "@/components/modals/modalInviteCode";
-import ModalInviteCodeView from "@/components/modals/modalInviteCodeView";
 
 const CreateTeam = ({ params }: { params: { id: string } }) => {
   const [userId, setUserId] = useState<string | null>("");

@@ -51,7 +51,7 @@ const Dashboard = () => {
           Hi! {userData ? userData.name : null}
         </div>
         {showOptions && (
-          <div className="absolute w-[175px] text-center flex flex-col gap-4 right-0 bg-color4 rounded-md shadow-lg z-40 p-2">
+          <div className="absolute w-[175px] text-center flex flex-col gap-2 right-0 bg-color4 rounded-md shadow-lg z-40 p-2">
             {userData ? (
               <button
                 className="text-white py-2 px-2 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer"
@@ -62,7 +62,7 @@ const Dashboard = () => {
             ) : null}
             {userData?.is_admin ? (
               <button
-                className="text-white py-2 px-2 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer"
+                className="text-white px-2 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer"
                 onClick={() => handlePageChange("manager")}
               >
                 PANEL ADMIN
