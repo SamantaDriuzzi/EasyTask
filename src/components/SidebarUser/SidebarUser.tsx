@@ -1,3 +1,4 @@
+// src/components/SidebarUser/SidebarUser.tsx
 "use client";
 import React from "react";
 import Link from "next/link";
@@ -8,7 +9,7 @@ const SidebarUser = () => {
     <div className="bg-white w-1/4 h-screen p-4 shadow-lg mt-16">
       <ul className="space-y-4">
         <li>
-          <Link href="/userdashboard">
+          <Link href="/userdashboard/my-account">
             <div className="flex items-center text-lg font-semibold text-gray-700 hover:text-gray-900">
               <FaUser className="mr-2" /> Mi cuenta
             </div>
