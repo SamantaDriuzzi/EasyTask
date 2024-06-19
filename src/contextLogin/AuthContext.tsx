@@ -13,6 +13,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { getUserById } from "@/helpers/users/get";
 
 interface AuthContextProps {
   user: any;
@@ -85,6 +86,19 @@ export const AuthProvider = ({ children }: any) => {
       return null;
     }
   }, []);
+
+  const fetchUser = useCallback(async () => {
+    const id = userIdFromToken();
+    if (id) {
+      const response = await getUserById(id);
+
+      setUser(response);
+    }
+  }, [userIdFromToken]);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
   const fetchTeams = useCallback(async () => {
     const id = userIdFromToken();

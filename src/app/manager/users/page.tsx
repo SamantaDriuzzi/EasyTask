@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaSearch, FaTrash } from "react-icons/fa";
-import { getUsers, getUserById, deleteUser } from "@/helpers/api/users";
+import { getUsers, deleteUser } from "@/helpers/api/users";
+import { getUserById } from "@/helpers/users/get";
 
 interface User {
   user_id: string;

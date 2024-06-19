@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getUserById } from "@/helpers/users/get";
 import { User } from "@/utils/types/interface-user";
 import ModalInviteCode from "@/components/modals/modalInviteCode";
+import ModalInviteCodeView from "@/components/modals/modalInviteCodeView";
 
 const CreateTeam = ({ params }: { params: { id: string } }) => {
   const [userId, setUserId] = useState<string | null>("");
@@ -17,11 +18,9 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
     created_date: new Date(),
     finish_date: new Date(),
   });
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState<boolean>(false);
   const [inviteCode, setInviteCode] = useState<string>("");
-  const [invitation, setInvitation] = useState<boolean>(false);
-  const openModal = () => setModalVisible(true);
-  const closeModal = () => setModalVisible(false);
+  const [showInviteCode, setShowInviteCode] = useState(false);
 
   useEffect(() => {
     setUserId(params.id);
@@ -54,6 +53,14 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
     }));
   };
 
+  const openModal = () => {
+    if (showInviteCode) {
+      setModalVisible(true);
+    }
+  };
+
+  const closeModal = () => setModalVisible(false);
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!userId) {
@@ -65,15 +72,16 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
       if (response && response.team_name && response.team_id) {
         const invitationCode = response.invitation_code;
         setInviteCode(invitationCode);
-        setInvitation(true);
         setTeamData({
           team_name: "",
           description: "",
           created_date: new Date(),
           finish_date: new Date(),
         });
+
         alert("Equipo creado correctamente ✅");
-        setModalVisible(true);
+        setShowInviteCode(true);
+        openModal();
       } else {
         alert("Error al crear el equipo");
       }
@@ -169,12 +177,20 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
                 rows={4}
               />
             </div>
-            <div className="flex justify-end mt-8">
+            <div className="flex justify-center mt-8 gap-10">
               <button
                 type="submit"
                 className="bg-[#329FA6] hover:bg-[#267d84] text-white font-bold py-3 px-6 rounded-lg"
               >
                 CREAR EQUIPO
+              </button>
+              <button
+                type="button"
+                disabled={!showInviteCode}
+                onClick={openModal}
+                className="bg-[#329FA6] hover:bg-[#267d84] text-white font-bold py-3 px-6 rounded-lg"
+              >
+                INVITACIÓN
               </button>
             </div>
           </form>
