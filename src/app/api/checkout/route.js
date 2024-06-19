@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -22,8 +23,8 @@ export async function POST(request) {
                 },
             ],
             mode: "payment",
-            success_url: "https://easy-task-cyan.vercel.app/donations/success",
-            failed_url: "https://easy-task-cyan.vercel.app/donations/failed",
+            success_url:`${API_URL}/donations/success`,
+            failed_url:`${API_URL}/donations/failed`,
         });
 
         return NextResponse.json({ url: session.url });

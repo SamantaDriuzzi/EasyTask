@@ -22,21 +22,20 @@ export async function POST(request) {
     switch (event.type) {
         case "checkout.session.completed":
             const checkoutSessionCompleted = event.data.object;
-            
+
             try {
                 const customerId = checkoutSessionCompleted.customer;
                 const customer = await stripe.customers.retrieve(customerId);
                 const donationAmount = checkoutSessionCompleted.amount_total;
                 const donationDate = new Date(); 
+                const donationEmail = customer.email;
 
                 // Guardar en la DB
-                await postNewDonation(customerId, donationAmount, donationDate)
+                await postNewDonation(customerId, donationAmount, donationDate, donationEmail);
 
-                // Usuario como donante en la DB -endpoint
-               
-                
             } catch (error) {
                 console.error('Error saving donation:', error.message);
+                return NextResponse.json({ error: 'Error saving donation' }, { status: 500 });
             }
 
             console.log({ checkoutSessionCompleted });
