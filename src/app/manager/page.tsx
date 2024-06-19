@@ -1,87 +1,34 @@
 "use client";
-
-import React from "react";
-import { FaTrash, FaPlus } from "react-icons/fa";
+import React, { useState } from "react";
 
 const ManagerPage = () => {
+  const [animate, setAnimate] = useState(false);
+
+  const handleMouseEnter = () => {
+    setAnimate(true);
+  };
+
+  const handleMouseLeave = () => {
+    setAnimate(false);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <div className="bg-[#B4B3EA] py-10 mt-10">
-        <h1 className="text-2xl font-bold text-center text-black">
-          Super Dashboard del Administrador
+    <div className="w-full flex flex-col items-center justify-center min-h-screen">
+      <div className="bg-[#B4B3EA] w-full text-center py-14 flex flex-col items-center justify-center">
+        <h1 className="text-2xl font-bold mt-2">
+          Bienvenido al Súper Dashboard del Administrador
         </h1>
-      </div>
-
-      <div className="container mx-auto p-6">
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-2xl font-bold mb-4">Gestionar Equipos</h2>
-          <div className="flex mb-4">
-            <input
-              type="text"
-              placeholder="Nombre del equipo"
-              className="flex-grow p-2 border border-gray-300 rounded-l-md"
-            />
-            <button className="bg-green-500 text-white p-2 rounded-r-md hover:bg-green-600">
-              <FaPlus />
-            </button>
-          </div>
-          <ul className="space-y-2">
-            <li className="flex justify-between items-center bg-gray-200 p-2 rounded-md">
-              <span>Equipo 1</span>
-              <button className="text-red-500 hover:text-red-700">
-                <FaTrash />
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-2xl font-bold mb-4">Gestionar Usuarios</h2>
-          <div className="flex mb-4">
-            <input
-              type="text"
-              placeholder="Nombre del usuario"
-              className="flex-grow p-2 border border-gray-300 rounded-l-md"
-            />
-            <input
-              type="email"
-              placeholder="Correo del usuario"
-              className="flex-grow p-2 border border-gray-300"
-            />
-            <button className="bg-green-500 text-white p-2 rounded-r-md hover:bg-green-600">
-              <FaPlus />
-            </button>
-          </div>
-          <ul className="space-y-2">
-            <li className="flex justify-between items-center bg-gray-200 p-2 rounded-md">
-              <span>Usuario 1</span>
-              <button className="text-red-500 hover:text-red-700">
-                <FaTrash />
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-          <h2 className="text-2xl font-bold mb-4">Gestionar Tareas</h2>
-          <div className="flex mb-4">
-            <input
-              type="text"
-              placeholder="Nombre de la tarea"
-              className="flex-grow p-2 border border-gray-300 rounded-l-md"
-            />
-            <button className="bg-green-500 text-white p-2 rounded-r-md hover:bg-green-600">
-              <FaPlus />
-            </button>
-          </div>
-          <ul className="space-y-2">
-            <li className="flex justify-between items-center bg-gray-200 p-2 rounded-md">
-              <span>Tarea 1</span>
-              <button className="text-red-500 hover:text-red-700">
-                <FaTrash />
-              </button>
-            </li>
-          </ul>
+        <p className="mt-4 font-bold text-lg text-gray-700">
+          Selecciona una opción del menú para gestionar usuarios o equipos.
+        </p>
+        <div className="mt-4 w-full max-w-3xl flex justify-center">
+          <img
+            src="/admin/dashboardAdmin.svg"
+            alt="Gato"
+            className={`w-1/2 h-auto ${animate ? "cat-animation" : ""}`}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          />
         </div>
       </div>
     </div>

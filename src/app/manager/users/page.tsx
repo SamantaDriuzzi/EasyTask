@@ -73,7 +73,7 @@ const UserManagement = () => {
             <th className="px-4 py-2">Nombre</th>
             <th className="px-4 py-2">Email</th>
             <th className="px-4 py-2">Apodo</th>
-            <th className="px-4 py-2">AcciÃ³n</th>
+            <th className="px-4 py-2">Acción</th>
           </tr>
         </thead>
         <tbody>

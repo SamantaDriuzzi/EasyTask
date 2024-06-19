@@ -9,13 +9,20 @@ import { IDonation } from "@/utils/types/interface-donation";
 const Donations = () => {
   const [donations, setDonations] = useState<IDonation[]>([]);
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const { user: authUser } = useAuth();
   const { donors } = useDonors();
 
   useEffect(() => {
     const fetchDonations = async () => {
-      const donationsData = await getAllDonations();
-      setDonations(donationsData);
+      try {
+        const donationsData = await getAllDonations();
+        setDonations(donationsData);
+      } catch (error) {
+        console.error("Error fetching donations:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchDonations();
@@ -27,8 +34,14 @@ const Donations = () => {
       setTotalAmount(total);
     };
 
-    calculateTotalAmount();
+    if (donations.length > 0) {
+      calculateTotalAmount();
+    }
   }, [donations]);
+
+  // if (!authUser) {
+  //   return <p>Cargando...</p>;
+  // }
 
   const isDonor = donors.some(donor => donor.credentials.email === authUser.email);
 
@@ -51,26 +64,32 @@ const Donations = () => {
             </tr>
           </thead>
           <tbody>
-            {donations.length > 0 ? (
-        donations.map((donation: IDonation) => (
-          <tr key={donation.donation_id}>
-            <td className="py-3 px-4">
-              <UserNameWithStar name={authUser.name} isDonor={isDonor} />
-            </td>
-            <td className="py-3 px-4">
-              {donation.user.credentials.email}
-            </td>
-            <td className="py-3 px-4">
-              {new Date(donation.date).toLocaleDateString()}
-            </td>
-            <td className="py-3 px-4">
-              {donation.amount} USD
-            </td>
-          </tr>
-        ))
-      ) : (
-        <div className="py-3 px-4">No hay donaciones aún...</div>
-      )}
+            {loading ? (
+              <tr>
+                <td className="py-3 px-4" colSpan={4}>Cargando donaciones...</td>
+              </tr>
+            ) : donations.length > 0 ? (
+              donations.map((donation: IDonation) => (
+                <tr key={donation.donation_id}>
+                  <td className="py-3 px-4">
+                    <UserNameWithStar name={authUser.name} isDonor={isDonor} />
+                  </td>
+                  <td className="py-3 px-4">
+                    {donation.user.credentials.email}
+                  </td>
+                  <td className="py-3 px-4">
+                    {new Date(donation.date).toLocaleDateString()}
+                  </td>
+                  <td className="py-3 px-4">
+                    {donation.amount} USD
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td className="py-3 px-4" colSpan={4}>No hay donaciones aún...</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </section>
