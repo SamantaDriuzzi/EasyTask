@@ -178,7 +178,7 @@ const PageMyAccount = () => {
               </div>
               <div className="flex space-x-4">
                 <Link href="/userdashboard/change-password">
-                  <button className="bg-teal-500 text-white p-2 rounded-md hover:bg-violet-400">
+                  <button className="bg-teal-500 text-white p-2 rounded-md hover:bg-violet-400 flex items-center">
                     Cambiar contraseña
                   </button>
                 </Link>
