@@ -2,9 +2,8 @@ import { User } from './interface-user'; // Asegúrate de importar la interfaz d
 
 export interface Message {
   id: number;
-  content: string;
   sender: User;
   receiver: User;
+  content: string;  
   createdAt: Date;
-  read: boolean;
 }

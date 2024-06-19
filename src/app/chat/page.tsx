@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import socket from "./socket";
 import { useAuth } from "@/contextLogin/AuthContext";
-import styles from "./styles.css"; // Asegúrate de tener este archivo CSS en tu proyecto
+import styles from "./styles.module.css";
 import { User } from "@/utils/types/interface-user";
 import { Message } from "@/utils/types/interface-message";
 import { getAmiwis, getUserById } from "@/helpers/chat/get";
@@ -33,7 +33,7 @@ const Chat = () => {
     useEffect(() => {
         const handleMessage = (message: Message) => {
             console.log("Message received:", message);
-            setMessages((prevMessages) => [message, ...prevMessages]);
+            setMessages((prevMessages) => [...prevMessages, message]); // Agregar mensaje al final de la lista
         };
 
         socket.on("message", handleMessage);
@@ -43,6 +43,19 @@ const Chat = () => {
         };
     }, []);
 
+    const handleSend = async () => {
+        if (input.trim() && user && selectedFriend) {
+            const message = await sendMessage(user.user_id, selectedFriend.user_id, input);
+            // No actualizamos localmente los mensajes aquí para evitar duplicaciones
+            socket.emit("message", {
+                senderId: user.user_id,
+                receiverId: selectedFriend.user_id,
+                content: input,
+            });
+            setInput("");
+        }
+    };
+
     useEffect(() => {
         console.log("Current messages state:", messages);
     }, [messages]);
@@ -51,27 +64,13 @@ const Chat = () => {
         const fetchMessages = async () => {
             if (selectedFriend) {
                 const fetchedMessages = await getMessages(selectedFriend.user_id);
+                // Ordenar los mensajes por createdAt en orden ascendente
+                fetchedMessages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
                 setMessages(fetchedMessages);
             }
         };
         fetchMessages();
     }, [selectedFriend]);
-
-    const handleSend = async () => {
-        if (input.trim() && user && selectedFriend) {
-            // Envía el mensaje al servidor
-            const message = await sendMessage(user.user_id, selectedFriend.user_id, input);
-            // Añade el mensaje al estado local para visualizarlo inmediatamente
-            setMessages((prevMessages) => [...prevMessages, message]);
-            setInput("");
-            // Emite el mensaje a través del socket
-            socket.emit("sendMessage", {
-                senderId: user.user_id,
-                receiverId: selectedFriend.user_id,
-                content: input,
-            });
-        }
-    };
 
     const handleFriendClick = (friend: User) => {
         setSelectedFriend(friend);
@@ -123,10 +122,10 @@ const Chat = () => {
                     </div>
                     {selectedFriend && (
                         <div
-                            className={`w-full lg:w-2/3 bg-[#e7e7ee] p-4 rounded-lg ml-8 flex flex-col ${styles["chat-container"]}`}
+                            className={`w-full lg:w-2/3 bg-[#e7e7ee] p-4 rounded-lg ml-8 flex flex-col chat-container`}
                         >
                             <div
-                                className={`flex items-center bg-[#4A48A4] p-2 rounded-md mb-3 ${styles["friend-info"]}`}
+                                className={`flex items-center bg-[#4A48A4] p-2 rounded-md mb-3 friend-info`}
                             >
                                 <div className="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center mr-4">
                                     {selectedFriend.profilePicture ? (
@@ -144,9 +143,7 @@ const Chat = () => {
                                 </div>
                                 <span className="text-xl text-white">{selectedFriend.name}</span>
                             </div>
-                            <div
-                                className={`flex-grow bg-white p-4 rounded-md overflow-y-auto ${styles["chat-messages"]}`}
-                            >
+                            <div className={`flex-grow bg-white p-4 rounded-md overflow-y-auto chat-messages`}>
                                 {messages.map((message) => (
                                     <div
                                         key={message.id}
@@ -160,7 +157,7 @@ const Chat = () => {
                                     </div>
                                 ))}
                             </div>
-                            <div className={`flex mt-4 ${styles["chat-input"]}`}>
+                            <div className={`flex mt-4 chat-input`}>
                                 <input
                                     type="text"
                                     value={input}
