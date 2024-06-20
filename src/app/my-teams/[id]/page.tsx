@@ -1,13 +1,20 @@
-"use client"
-import ChatButton from "@/components/ChatButton";
+"use client";
+import { useAuth } from "@/contextLogin/AuthContext";
 import { getMyTeams } from "@/helpers/teams/get";
 import { Team } from "@/utils/types/interface-team";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 // eslint-disable-next-line @next/next/no-async-client-component
 const MyTeams = async ({ params }: { params: { id: string } }) => {
   const router = useRouter();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+    }
+  }, [validateUserSession, router]);
   const teams = await getMyTeams(params.id);
 
   const handleInfoTeam = (team_id: string | null) => {
