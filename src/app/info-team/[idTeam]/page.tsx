@@ -1,5 +1,6 @@
 "use client";
 import ModalInviteCode from "@/components/modals/modalInviteCode";
+import { useAuth } from "@/contextLogin/AuthContext";
 import { getTeamById } from "@/helpers/teams/get";
 import { Team } from "@/utils/types/interface-team";
 import { useRouter } from "next/navigation";
@@ -7,6 +8,13 @@ import { useEffect, useState } from "react";
 
 const InfoTeam = ({ params }: { params: { idTeam: string } }) => {
   const router = useRouter();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+    }
+  }, [validateUserSession, router]);
   useEffect(() => {
     const fetchTeamInfo = async () => {
       try {
