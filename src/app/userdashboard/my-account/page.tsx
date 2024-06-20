@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -9,10 +9,14 @@ import {
   faUpload,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
+import { useAuth } from "@/contextLogin/AuthContext";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const PageMyAccount = () => {
+  const { user, setUser, userIdFromToken } = useAuth();
   const [name, setName] = useState("👤");
-  const [email, setEmail] = useState("easytasks@gmail.com");
+  const [email, setEmail] = useState("{}");
   const [nickname, setNickname] = useState("👤");
   const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({
     name: false,
@@ -21,23 +25,115 @@ const PageMyAccount = () => {
   });
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
+  useEffect(() => {
+    const loadUserData = async () => {
+      const userId = userIdFromToken();
+      if (userId) {
+        try {
+          const response = await fetch(`${API_URL}/users/${userId}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user?.token}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Error fetching user data");
+          }
+
+          const userData = await response.json();
+          setUser(userData);
+          setName(userData.name || "👤");
+          setEmail(userData.email || "email@email.com");
+          setNickname(userData.nickname || "👤");
+          setProfileImage(userData.profileImage || null);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+
+    if (user) {
+      setName(user.name || "👤");
+      setEmail(user.email || "email@email.com");
+      setNickname(user.nickname || "👤");
+      setProfileImage(user.profileImage || null);
+    } else {
+      loadUserData();
+    }
+  }, [user, userIdFromToken]);
+
   const handleEdit = (field: string) => {
     setIsEditing({ ...isEditing, [field]: !isEditing[field] });
   };
 
-  const handleSave = (field: string) => {
+  const handleSave = async (field: string) => {
     setIsEditing({ ...isEditing, [field]: false });
-    // lógica para guardar los cambios en el servidor.
+    const userId = userIdFromToken();
+    if (!user || !user.token || !userId) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/users/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
+        body: JSON.stringify({
+          [field]:
+            field === "name" ? name : field === "email" ? email : nickname,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error updating user data");
+      }
+
+      const updatedUser = await response.json();
+      setUser(updatedUser);
+      alert("Datos actualizados con éxito");
+    } catch (error) {
+      console.error("Error updating user data:", error);
+    }
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    const userId = userIdFromToken();
+    if (!user || !user.token || !userId) {
+      console.error("User not authenticated");
+      return;
+    }
+
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append("profilePicture", file);
+
+      try {
+        const response = await fetch(`${API_URL}/files/profilePicture`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(`Error uploading image: ${errorMessage}`);
+        }
+
+        const result = await response.json();
+        setProfileImage(result.url);
+        setUser({ ...user, profileImage: result.url });
+        alert("Imagen subida con éxito");
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     }
   };
 
@@ -201,4 +297,3 @@ const PageMyAccount = () => {
 };
 
 export default PageMyAccount;
-//(`${API_URL}/files/profilePicture`  url para la foto
