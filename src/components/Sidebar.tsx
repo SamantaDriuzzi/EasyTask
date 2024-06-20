@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import Link from "next/link";
 import { FaUsers, FaUser, FaHeart } from "react-icons/fa";
 
