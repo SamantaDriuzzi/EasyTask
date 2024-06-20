@@ -1,15 +1,14 @@
-import { Message } from '../../utils/types/interface-message'; 
+import { Message } from '../../utils/types/interface-message';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const getMessages = async (userId: string): Promise<Message[]> => {
-  const response = await fetch(`${API_URL}/messages/${userId}`);
+const getMessages = async (senderId: string, receiverId: string): Promise<Message[]> => {
+  const response = await fetch(`${API_URL}/messages/${senderId}/${receiverId}`);
   if (!response.ok) {
     throw new Error('Error fetching messages');
   }
   return response.json();
 };
-
-export { getMessages };
 
 const sendMessage = async (senderId: string, receiverId: string, content: string): Promise<Message> => {
   const response = await fetch(`${API_URL}/messages/send`, {
@@ -26,4 +25,4 @@ const sendMessage = async (senderId: string, receiverId: string, content: string
   return response.json();
 };
 
-export { sendMessage };
+export { getMessages, sendMessage };

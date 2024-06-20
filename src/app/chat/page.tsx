@@ -1,13 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import socket from "./socket";
 import { useAuth } from "@/contextLogin/AuthContext";
-import styles from "./styles.module.css";
 import { User } from "@/utils/types/interface-user";
 import { Message } from "@/utils/types/interface-message";
-import { getAmiwis, getUserById } from "@/helpers/chat/get";
 import { getMessages, sendMessage } from "@/helpers/chat/messages";
+import Image from "next/image";
+import { io } from "socket.io-client";
+import { getAmiwis, getUserById } from "@/helpers/chat/get";
 
 const Chat = () => {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -31,55 +30,75 @@ const Chat = () => {
     }, [id]);
 
     useEffect(() => {
-        const handleMessage = (message: Message) => {
-            console.log("Message received:", message);
-            setMessages((prevMessages) => [...prevMessages, message]); // Agregar mensaje al final de la lista
+        if (!user) return;
+
+        const handleReceivedMessage = (message: Message) => {
+            setMessages((prevMessages) => [...prevMessages, message]);
         };
 
-        socket.on("message", handleMessage);
+        const socket = io('http://localhost:3000', {
+          auth: {
+            token: user.token,
+            name: user.name,
+            id: user.user_id,
+          },
+          withCredentials: true, 
+        });
+        
+
+        socket.on("connect", () => {
+            console.log("Conectado");
+        });
+
+        socket.on("disconnect", () => {
+            console.log("Desconectado");
+        });
+
+        socket.on("on-message", handleReceivedMessage);
 
         return () => {
-            socket.off("message", handleMessage);
+            socket.off("on-message", handleReceivedMessage);
+            socket.disconnect();
         };
-    }, []);
-
-    const handleSend = async () => {
-        if (input.trim() && user && selectedFriend) {
-            const message = await sendMessage(user.user_id, selectedFriend.user_id, input);
-            // No actualizamos localmente los mensajes aquí para evitar duplicaciones
-            socket.emit("message", {
-                senderId: user.user_id,
-                receiverId: selectedFriend.user_id,
-                content: input,
-            });
-            setInput("");
-        }
-    };
-
-    useEffect(() => {
-        console.log("Current messages state:", messages);
-    }, [messages]);
-
-    useEffect(() => {
-        const fetchMessages = async () => {
-            if (selectedFriend) {
-                const fetchedMessages = await getMessages(selectedFriend.user_id);
-                // Ordenar los mensajes por createdAt en orden ascendente
-                fetchedMessages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-                setMessages(fetchedMessages);
-            }
-        };
-        fetchMessages();
-    }, [selectedFriend]);
+    }, [user]);
 
     const handleFriendClick = (friend: User) => {
         setSelectedFriend(friend);
+        loadMessages(user!.user_id, friend.user_id);
+    };
+
+    const loadMessages = async (senderId: string, receiverId: string) => {
+        try {
+            const fetchedMessages = await getMessages(senderId, receiverId);
+            setMessages(fetchedMessages);
+        } catch (error) {
+            console.error("Error fetching messages:", error);
+        }
+    };
+
+    const handleSend = async () => {
+        if (input.trim() && selectedFriend && user) {
+            try {
+                const savedMessage = await sendMessage(user.user_id, selectedFriend.user_id, input);
+                setMessages((prevMessages) => [...prevMessages, savedMessage]);
+
+                setInput("");
+                playSound();
+            } catch (error) {
+                console.error("Error sending message:", error);
+            }
+        }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter") {
             handleSend();
         }
+    };
+
+    const playSound = () => {
+        const audio = new Audio("/sounds/notification.wav");
+        audio.play();
     };
 
     return (
@@ -119,14 +138,13 @@ const Chat = () => {
                                 </li>
                             ))}
                         </ul>
+                        <h3 className="text-white mt-4 text-center">Envía un mensaje a alguien conectado</h3>
                     </div>
                     {selectedFriend && (
                         <div
                             className={`w-full lg:w-2/3 bg-[#e7e7ee] p-4 rounded-lg ml-8 flex flex-col chat-container`}
                         >
-                            <div
-                                className={`flex items-center bg-[#4A48A4] p-2 rounded-md mb-3 friend-info`}
-                            >
+                            <div className={`flex items-center bg-[#4A48A4] p-2 rounded-md mb-3 friend-info`}>
                                 <div className="relative w-10 h-10 rounded-full overflow-hidden flex items-center justify-center mr-4">
                                     {selectedFriend.profilePicture ? (
                                         <Image
@@ -144,7 +162,7 @@ const Chat = () => {
                                 <span className="text-xl text-white">{selectedFriend.name}</span>
                             </div>
                             <div className={`flex-grow bg-white p-4 rounded-md overflow-y-auto chat-messages`}>
-                                {messages.map((message) => (
+                                {messages?.map((message) => (
                                     <div
                                         key={message.id}
                                         className={`p-4 my-2 rounded-md ${
