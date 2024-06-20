@@ -56,9 +56,9 @@ const PageMyAccount = () => {
 
     if (user) {
       setName(user.name || "👤");
-      setEmail(user.email || "email@email.com");
-      setNickname(user.nickname || "👤");
-      setProfileImage(user.profileImage || null);
+      setEmail(user.credentials.email || "email@email.com");
+      setNickname(user.credentials.nickname || "👤");
+      setProfileImage(user.profilePicture || null);
     } else {
       loadUserData();
     }
