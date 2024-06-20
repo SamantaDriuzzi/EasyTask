@@ -1,4 +1,5 @@
 "use client";
+import ChatButton from "@/components/ChatButton";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { getMyTeams } from "@/helpers/teams/get";
 import { Team } from "@/utils/types/interface-team";
@@ -56,7 +57,7 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
                 ))
               ) : (
                 <div className="mb-12 p-4 bg-white text-black rounded-md">
-                  <h4 className="font-bold">Aún no hay equipos por aquí</h4>
+                  <h4 className="font-bold">Cargando equipos...</h4>
                   <p></p>
                 </div>
               )}
@@ -88,11 +89,12 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
                 ))
               ) : (
                 <div className="mb-12 p-4 bg-white text-black rounded-md">
-                  <h4 className="font-bold">Aún no hay equipos por aquí</h4>
+                  <h4 className="font-bold">Cargando equipos...</h4>
                   <p></p>
                 </div>
               )}
             </div>
+            <ChatButton />
           </div>
         </div>
       </div>

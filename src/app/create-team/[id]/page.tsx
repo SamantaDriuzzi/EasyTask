@@ -8,6 +8,7 @@ import { User } from "@/utils/types/interface-user";
 import ModalInviteCode from "@/components/modals/modalInviteCode";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { useRouter } from "next/navigation";
+import ChatButton from "@/components/ChatButton";
 
 const CreateTeam = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
@@ -209,6 +210,7 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
             onClose={closeModal}
             inviteCode={inviteCode}
           />
+          <ChatButton />
         </div>
       </div>
     </div>

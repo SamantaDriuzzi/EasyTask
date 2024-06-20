@@ -5,6 +5,7 @@ import React from "react";
 import { useEffect } from "react";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { useRouter } from "next/navigation";
+import ChatButton from "@/components/ChatButton";
 
 const Home = () => {
   const router = useRouter();
@@ -69,6 +70,7 @@ const Home = () => {
             />
             <h2 className="my-4 hover:underline">MIS EQUIPOS</h2>
           </button>
+          <ChatButton />
         </div>
       </section>
     </>
