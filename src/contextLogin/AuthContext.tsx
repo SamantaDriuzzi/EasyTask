@@ -87,19 +87,6 @@ export const AuthProvider = ({ children }: any) => {
     }
   }, []);
 
-  const fetchUser = useCallback(async () => {
-    const id = userIdFromToken();
-    if (id) {
-      const response = await getUserById(id);
-
-      setUser(response);
-    }
-  }, [userIdFromToken]);
-
-  useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
-
   const fetchTeams = useCallback(async () => {
     const id = userIdFromToken();
     if (id) {
