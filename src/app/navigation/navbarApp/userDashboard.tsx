@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { User } from "@/utils/types/interface-user";
+import { getUserById } from "@/helpers/users/get";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -10,16 +11,19 @@ const Dashboard = () => {
 
   const [showOptions, setShowOptions] = useState(false);
   const [userData, setUserData] = useState<User>();
-  const { user } = useAuth();
+  const { userIdFromToken } = useAuth();
+  const id = userIdFromToken();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const fetchedUser = user;
-      setUserData(fetchedUser);
+      if (id) {
+        const fetchedUser = await getUserById(id);
+        setUserData(fetchedUser);
+      }
     };
 
     fetchUser();
-  }, [user]);
+  }, [id]);
 
   const { handleSignOut } = useAuth() || {
     handleSignOut: () => {},
