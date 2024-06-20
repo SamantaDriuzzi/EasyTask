@@ -1,13 +1,23 @@
 "use client";
-import { useAuth } from "@/contextLogin/AuthContext";
+
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React from "react";
+import { useEffect } from "react";
+import { useAuth } from "@/contextLogin/AuthContext";
+import { useRouter } from "next/navigation";
+import ChatButton from "@/components/ChatButton";
 
 const Home = () => {
   const router = useRouter();
   const { userIdFromToken } = useAuth();
   const id = userIdFromToken();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+    }
+  }, [router, validateUserSession]);
 
   const handleMyTeams = () => {
     router.push(`/my-teams/${id}`);
@@ -60,6 +70,7 @@ const Home = () => {
             />
             <h2 className="my-4 hover:underline">MIS EQUIPOS</h2>
           </button>
+          <ChatButton />
         </div>
       </section>
     </>
