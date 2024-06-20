@@ -1,12 +1,23 @@
 "use client";
+import ChatButton from "@/components/ChatButton";
 import Logo from "@/components/logo";
 import ModalJoinTeam from "@/components/modals/modalJoinTeam";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { postJoinTeam } from "@/helpers/teams/post";
-import Image from "next/image";
-import React, { useState } from "react";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const UneteAUnEquipoPage = () => {
+  const router = useRouter();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+      return;
+    }
+  }, [validateUserSession, router]);
   const [invitationCode, setInvitationCode] = useState("");
   const { userIdFromToken } = useAuth();
   const userId = userIdFromToken();
@@ -25,12 +36,18 @@ const UneteAUnEquipoPage = () => {
       const info = { userid: userId, code: invitationCode };
       const data = await postJoinTeam(info);
       if (data && data.team.team_id && data.team.team_name) {
-        alert("Te sumaste al equipo ✅");
+        Swal.fire({
+          icon: "success",
+          title: "Te sumaste al equipo!",
+        });
         setTeamName(data.team.team_name);
         openModal();
         setInvitationCode("");
       } else {
-        alert("Hubo un error al unirse ❌");
+        Swal.fire({
+          icon: "error",
+          title: "Hubo un error al unirse",
+        });
       }
     } catch (error) {
       console.error("Error al unirse al equipo:", error);
@@ -73,6 +90,7 @@ const UneteAUnEquipoPage = () => {
             team_name={teamName}
           />
         </div>
+        <ChatButton />
       </div>
     </div>
   );

@@ -1,29 +1,33 @@
 "use client";
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
 import Image from "next/image";
+import { useEffect } from "react";
+import { useAuth } from "@/contextLogin/AuthContext";
+import { useRouter } from "next/navigation";
+import TotalButton from '@/components/donationsButton/totalButton';
 
 const Donations = () => {
-    const [amount, setAmount] = useState('');
-    const router = useRouter();
+  const router = useRouter();
+  
+  const [amount, setAmount] = useState("");
 
-    const donation = {
-        name: "Easytasks",
-        amount: parseFloat(amount) || 0,
-    };
+  const donation = {
+    name: "Easytasks",
+    amount: parseFloat(amount) || 0,
+  };
 
-    const handlePay = async () => {
-        try {
-            const res = await fetch("/api/checkout", {
-                method: "POST",
-                body: JSON.stringify({
-                    amount: donation.amount,
-                    name: donation.name,
-                }),
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
+  const handlePay = async () => {
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        body: JSON.stringify({
+          amount: donation.amount,
+          name: donation.name,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
             if (!res.ok) {
                 const errorDetails = await res.json();
@@ -31,50 +35,62 @@ const Donations = () => {
                 throw new Error('Network response was not ok');
             }
 
-            const session = await res.json();
+      const session = await res.json();
 
-            if (session.url) {
-                router.push(session.url);
-            }
-        } catch (error) {
-            console.error('Error processing payment:', error);
-        }
-    };
+      if (session.url) {
+        router.push(session.url);
+      }
+    } catch (error) {
+      console.error("Error processing payment:", error);
+    }
+  };
 
-    return (
-        <>
-            <section className="flex flex-col justify-center items-center py-20 h-auto bg-color9 text-white">
-                <div className="flex flex-col justify-center items-center w-[60%] pt-10 pb-3">
-                    <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
-                        Tu apoyo puede transformar la forma en que trabajas y organizas tus tareas diarias.
-                    </h2>
-                    <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
-                        Nuestra app gratuita ya facilita tu productividad, pero con tu donación, podemos llevarla al siguiente nivel.
-                    </h2>
-                    <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
-                        Imagina tener acceso a nuevas funcionalidades que harán tu trabajo aún más eficiente y efectivo.
-                    </h2>
-                    <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
-                        Cada contribución, por pequeña que sea, nos ayuda a mantener, innovar y mejorar, ofreciendo herramientas avanzadas que se adaptan a tus necesidades.
-                    </h2>
-                    <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
-                        ¡Sé parte de esta evolución y ayúdanos a construir una experiencia de usuario incomparable!
-                    </h2>
-                </div>
+  return (
+    <>
+      <section className="flex flex-col justify-center items-center py-20 h-auto bg-color9 text-white">
+        <div className="flex flex-col justify-center items-center w-[60%] pt-10 pb-3">
+          <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
+            Tu apoyo puede transformar la forma en que trabajas y organizas tus
+            tareas diarias.
+          </h2>
+          <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
+            Nuestra app gratuita ya facilita tu productividad, pero con tu
+            donación, podemos llevarla al siguiente nivel.
+          </h2>
+          <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
+            Imagina tener acceso a nuevas funcionalidades que harán tu trabajo
+            aún más eficiente y efectivo.
+          </h2>
+          <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
+            Cada contribución, por pequeña que sea, nos ayuda a mantener,
+            innovar y mejorar, ofreciendo herramientas avanzadas que se adaptan
+            a tus necesidades.
+          </h2>
+          <h2 className="transition-transform duration-300 transform hover:scale-125 my-2">
+            ¡Sé parte de esta evolución y ayúdanos a construir una experiencia
+            de usuario incomparable!
+          </h2>
+        </div>
 
-                <div className='flex flex-col w-[400px] my-10 border rounded-md border-[white] py-7 px-4'>
-                    <div className='flex flex-col items-center'>
-                        <Image src="/donations/donarGato.svg" alt="gato donante" width="200" height="200" className="animate-scalePulse" />
-                        <h2 className='mt-5'>Ingrese el monto que quiere donar (USD):</h2>
-                    </div>
-                    <input
-                        type="number"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        min="1"
-                        placeholder="5"
-                        className="mb-4 p-2 text-[black]"
-                    />
+        <div className="flex flex-col w-[400px] my-10 border rounded-md border-[white] py-7 px-4">
+          <div className="flex flex-col items-center">
+            <Image
+              src="/donations/donarGato.svg"
+              alt="gato donante"
+              width="200"
+              height="200"
+              className="animate-scalePulse"
+            />
+            <h2 className="mt-5">Ingrese el monto que quiere donar (USD):</h2>
+          </div>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            min="1"
+            placeholder="5"
+            className="mb-4 p-2 text-[black]"
+          />
 
                     <button onClick={handlePay} className="bg-red-500 p-2 text-white rounded hover:bg-red-600">¡DONA AQUÍ!</button>
                 </div>

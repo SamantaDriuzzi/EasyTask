@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(request) {
@@ -15,6 +17,7 @@ export async function POST(request) {
                         currency: "usd",
                         product_data: {
                             name: body.name,
+                            email:body.email,
                         },
                         unit_amount: body.amount * 100,
                     },
@@ -22,8 +25,8 @@ export async function POST(request) {
                 },
             ],
             mode: "payment",
-            success_url: "http://localhost:3000/donations/success",
-            cancel_url: "http://localhost:3000/donations/cancel",
+            success_url: `${API_URL}donations/success`,
+            cancel_url: `${API_URL}donations/cancel`,
         });
 
         return NextResponse.json({ url: session.url });

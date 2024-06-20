@@ -34,6 +34,15 @@ const TeamManagement = () => {
     fetchTeams();
   }, []);
 
+  useEffect(() => {
+    if (selectedTeamId) {
+      const endOfListElement = document.getElementById('endOfList');
+      if (endOfListElement) {
+        endOfListElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [selectedTeamId]);
+
   const fetchTeams = async (searchTerm: string = "") => {
     try {
       const allTeams = await getTeams();
@@ -122,7 +131,7 @@ const TeamManagement = () => {
           <tr>
             <th className="px-4 py-2">Equipo</th>
             <th className="px-4 py-2">Colaborador</th>
-            <th className="px-4 py-2">AcciÃ³n</th>
+            <th className="px-4 py-2">Acción</th>
           </tr>
         </thead>
         <tbody>
@@ -165,7 +174,8 @@ const TeamManagement = () => {
         </tbody>
       </table>
       {selectedTeamId && (
-        <div className="mt-4">
+        // <div className="mt-4">
+          <div className="mt-4" id="endOfList">
           <h3 className="text-xl font-bold">Agregar colaborador al equipo</h3>
           <div className="flex mb-4">
             <input

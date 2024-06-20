@@ -1,11 +1,26 @@
+"use client";
+import ChatButton from "@/components/ChatButton";
+import { useAuth } from "@/contextLogin/AuthContext";
 import { getMyTeams } from "@/helpers/teams/get";
-
 import { Team } from "@/utils/types/interface-team";
-import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
+// eslint-disable-next-line @next/next/no-async-client-component
 const MyTeams = async ({ params }: { params: { id: string } }) => {
+  const router = useRouter();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+    }
+  }, [validateUserSession, router]);
   const teams = await getMyTeams(params.id);
+
+  const handleInfoTeam = (team_id: string | null) => {
+    router.push(`/info-team/${team_id}`);
+  };
 
   return (
     <div className="">
@@ -23,7 +38,7 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
               </h3>
               {teams ? (
                 teams.leaderTeams.map((team: Team) => (
-                  <Link href={`/info-team/${team.team_id}`} key={team.team_id}>
+                  <div key={team.team_id}>
                     <div className="mb-4 p-4 bg-color2 text-black rounded-md hover:scale-105 transition-transform cursor-pointer">
                       <h4 className="font-bold">Nombre: {team.team_name}</h4>
                       <p>Descripción: {team.description}</p>
@@ -31,12 +46,18 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
                         Fecha de finalización:{" "}
                         {new Date(team.finish_date).toLocaleDateString()}
                       </p>
+                      <button
+                        onClick={() => handleInfoTeam(team.team_id)}
+                        className="bg-color8 text-black px-4 py-2 rounded"
+                      >
+                        Ver detalles
+                      </button>
                     </div>
-                  </Link>
+                  </div>
                 ))
               ) : (
                 <div className="mb-12 p-4 bg-white text-black rounded-md">
-                  <h4 className="font-bold">Aún no hay equipos por aquí</h4>
+                  <h4 className="font-bold">Cargando equipos...</h4>
                   <p></p>
                 </div>
               )}
@@ -49,7 +70,7 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
               </h3>
               {teams ? (
                 teams.collaboratorTeams.map((team: Team) => (
-                  <Link href={`/info-team/${team.team_id}`} key={team.team_id}>
+                  <div key={team.team_id}>
                     <div className="mb-4 p-4 bg-color3 text-black rounded-md hover:scale-105 transition-transform cursor-pointer">
                       <h4 className="font-bold">Nombre: {team.team_name}</h4>
                       <p>Descripción: {team.description}</p>
@@ -57,16 +78,23 @@ const MyTeams = async ({ params }: { params: { id: string } }) => {
                         Fecha de finalización:{" "}
                         {new Date(team.finish_date).toLocaleDateString()}
                       </p>
+                      <button
+                        onClick={() => handleInfoTeam(team.team_id)}
+                        className="bg-color8 text-black px-4 py-2 rounded"
+                      >
+                        Ver detalles
+                      </button>
                     </div>
-                  </Link>
+                  </div>
                 ))
               ) : (
                 <div className="mb-12 p-4 bg-white text-black rounded-md">
-                  <h4 className="font-bold">Aún no hay equipos por aquí</h4>
+                  <h4 className="font-bold">Cargando equipos...</h4>
                   <p></p>
                 </div>
               )}
             </div>
+            <ChatButton />
           </div>
         </div>
       </div>

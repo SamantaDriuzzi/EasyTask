@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import { FaTimes } from "react-icons/fa";
+import Swal from "sweetalert2";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const Newsletter = ({ onClose }: { onClose: () => void }) => {
   const [email, setEmail] = useState("");
@@ -18,10 +19,16 @@ const Newsletter = ({ onClose }: { onClose: () => void }) => {
     });
 
     if (response.ok) {
-      alert("Subscribed successfully!😊");
+      Swal.fire({
+        icon: "success",
+        title: "Subscripción exitosa! 😊",
+      });
       onClose();
     } else {
-      alert("Failed to subscribe.😞");
+      Swal.fire({
+        icon: "error",
+        title: "Subscripción fallida 😞",
+      });
     }
   };
 

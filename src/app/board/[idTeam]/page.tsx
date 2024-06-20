@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@/contextLogin/AuthContext";
 import { postNewSprint } from "@/helpers/sprint/post";
 import React, { useEffect, useState } from "react";
 import { getAllSprintByTeam } from "@/helpers/sprint/get";
@@ -13,6 +12,10 @@ import { putTask } from "@/helpers/task/put";
 import { Sprint } from "@/utils/types/interface-sprint";
 import { getTeamById } from "@/helpers/teams/get";
 import { Team } from "@/utils/types/interface-team";
+import { deleteTaskById } from "@/helpers/task/delete";
+
+import { useAuth } from "@/contextLogin/AuthContext";
+import { useRouter } from "next/navigation";
 
 const initialTasks: {
   open: Task[];
@@ -27,6 +30,14 @@ const initialTasks: {
 };
 
 const Board = ({ params }: { params: { idTeam: string } }) => {
+  const router = useRouter();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+    }
+  }, [validateUserSession, router]);
   const [teamID, setTeamID] = useState<string | null>(null);
   useEffect(() => {
     setTeamID(params.idTeam);
@@ -55,7 +66,6 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
         try {
           const teamInfo = await getTeamById(teamID);
           setTeam(teamInfo);
-          console.log("info del equipo:   ::::::", teamInfo);
         } catch (error) {
           console.error("Error fetching team info:", error);
         }
@@ -215,7 +225,7 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
           Tablero equipo: {team && team.team_name}
         </h1>
         <h3 className="font-semibold text-left text-black ml-6">
-          Lider: {team && team.team_leader.name}
+          Lider del equipo: {team && team.team_leader.name}
         </h3>
       </div>
 

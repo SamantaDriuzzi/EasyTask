@@ -1,7 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { FaSearch, FaTrash } from "react-icons/fa";
-import { getUsers, getUserById, deleteUser } from "@/helpers/api/users";
+import { getUsers, deleteUser } from "@/helpers/api/users";
+import { getUserById } from "@/helpers/users/get";
+import { useAuth } from "@/contextLogin/AuthContext";
 
 interface User {
   user_id: string;
@@ -13,6 +15,10 @@ interface User {
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [user, setUser] = useState<User | null>(null);
+  const { userIdFromToken } = useAuth();
+  const id = userIdFromToken();
+  console.log(id);
 
   useEffect(() => {
     fetchUsers();
@@ -20,6 +26,7 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
+      
       const allUsers = await getUsers();
       console.log("Fetched Users:", allUsers);
       setUsers(allUsers);

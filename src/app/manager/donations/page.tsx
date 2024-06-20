@@ -17,9 +17,10 @@ const Donations = () => {
       const donationsData = await getAllDonations();
       setDonations(donationsData);
     };
-
+    console.log(getAllDonations)
     fetchDonations();
   }, []);
+
 
   useEffect(() => {
     const calculateTotalAmount = () => {
@@ -52,25 +53,25 @@ const Donations = () => {
           </thead>
           <tbody>
             {donations.length > 0 ? (
-        donations.map((donation: IDonation) => (
-          <tr key={donation.donation_id}>
-            <td className="py-3 px-4">
-              <UserNameWithStar name={authUser.name} isDonor={isDonor} />
-            </td>
-            <td className="py-3 px-4">
-              {donation.user.credentials.email}
-            </td>
-            <td className="py-3 px-4">
-              {new Date(donation.date).toLocaleDateString()}
-            </td>
-            <td className="py-3 px-4">
-              {donation.amount} USD
-            </td>
-          </tr>
-        ))
-      ) : (
-        <div className="py-3 px-4">No hay donaciones aún...</div>
-      )}
+              donations.map((donation: IDonation) => (
+                <tr key={donation.donation_id}>
+                  <td className="py-3 px-4">
+                    <UserNameWithStar name={authUser.name} isDonor={isDonor} />
+                  </td>
+                  <td className="py-3 px-4">
+                    {donation.user.credentials.email}
+                  </td>
+                  <td className="py-3 px-4">
+                    {new Date(donation.date).toLocaleDateString()}
+                  </td>
+                  <td className="py-3 px-4">
+                    {donation.amount} USD
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <div className="py-3 px-4">No hay donaciones aún...</div>
+            )}
           </tbody>
         </table>
       </section>
