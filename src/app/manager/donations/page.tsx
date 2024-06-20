@@ -18,6 +18,7 @@ const Donations = () => {
   useEffect(() => {
     const calculateTotalAmount = () => {
       const total = donations.reduce((acc, donation) => {
+        // Convert donation.amount to number before adding to acc
         const amount =
           typeof donation.amount === "string"
             ? parseFloat(donation.amount)
