@@ -1,9 +1,17 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { FaSearch, FaTrash } from "react-icons/fa";
-import { getUsers, getUserById, deleteUser } from "@/helpers/api/users";
+import { FaPlus, FaSearch, FaTrash } from "react-icons/fa";
+import {
+  getUsers,
+  deleteUser,
+  getDeletedUsers,
+  restoreUser,
+} from "@/helpers/api/users";
+import { getUserById } from "@/helpers/users/get";
+import { useAuth } from "@/contextLogin/AuthContext";
 
 interface User {
+  credentials: any;
   user_id: string;
   name: string;
   email: string;
@@ -13,6 +21,10 @@ interface User {
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [user, setUser] = useState<User | null>(null);
+  const { userIdFromToken } = useAuth();
+  const id = userIdFromToken();
+  console.log(id);
 
   useEffect(() => {
     fetchUsers();
@@ -20,7 +32,7 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const allUsers = await getUsers();
+      const allUsers = await getDeletedUsers();
       console.log("Fetched Users:", allUsers);
       setUsers(allUsers);
     } catch (error) {
@@ -41,10 +53,10 @@ const UserManagement = () => {
     }
   };
 
-  const handleDelete = async (user_id: string) => {
+  const handleRestore = async (user_id: string) => {
     try {
       console.log("Trying to delete user with ID:", user_id);
-      await deleteUser(user_id);
+      await restoreUser(user_id);
       fetchUsers();
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -61,7 +73,7 @@ const UserManagement = () => {
             <th className="px-4 py-2">Nombre</th>
             <th className="px-4 py-2">Email</th>
             <th className="px-4 py-2">Apodo</th>
-            <th className="px-4 py-2">Acción</th>
+            <th className="px-4 py-2">Accion</th>
           </tr>
         </thead>
         <tbody>
@@ -72,10 +84,10 @@ const UserManagement = () => {
               <td className="border px-4 py-2">{user.nickname}</td>
               <td className="border px-4 py-2 text-center">
                 <button
-                  onClick={() => handleDelete(user.user_id)}
+                  onClick={() => handleRestore(user.user_id)}
                   className="text-red-300 hover:text-red-700"
                 >
-                  <FaTrash />
+                  <FaPlus />
                 </button>
               </td>
             </tr>

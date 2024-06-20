@@ -14,6 +14,11 @@ const Sidebar = () => {
           </Link>
         </li>
         <li>
+          <Link href="/manager/userdelete">
+            <div className="flex items-center text-lg font-semibold text-gray-700 hover:text-gray-900">
+              <FaUser className="mr-2" /> Restaurar Usuario
+            </div>
+          </Link>
           <Link href="/manager/teams">
             <div className="flex items-center text-lg font-semibold text-gray-700 hover:text-gray-900">
               <FaUsers className="mr-2" /> Equipos

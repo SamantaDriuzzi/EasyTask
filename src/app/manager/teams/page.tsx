@@ -102,21 +102,43 @@ const TeamManagement = () => {
       <h2 className="text-2xl font-bold mb-4 flex items-center">
         <FaUsers className="mr-2" /> Equipos
       </h2>
-      <div className="flex mb-4">
-        <input
-          type="text"
-          placeholder="Nombre del equipo"
-          value={teamName}
-          onChange={(e) => setTeamName(e.target.value)}
-          className="flex-grow p-2 border border-gray-300 rounded-md"
-        />
-        <button
-          onClick={handleAddTeam}
-          className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 ml-2"
-        >
-          <FaPlus />
-        </button>
-      </div>
+
+      <div className="flex mb-4"></div>
+      {selectedTeamId && (
+        <div className="mt-4">
+          <h3 className="text-xl font-bold">Agregar colaborador al equipo</h3>
+          <div className="flex mb-4">
+            <input
+              type="text"
+              placeholder="Nombre del usuario"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="flex-grow p-2 border border-gray-300 rounded-md"
+            />
+            <button
+              onClick={handleSearchUser}
+              className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 ml-2"
+            >
+              Buscar
+            </button>
+          </div>
+          {searchResults.length > 0 && (
+            <ul>
+              {searchResults.map((user) => (
+                <li key={user.user_id}>
+                  {user.name} {user.email}
+                  <button
+                    onClick={() => handleAddCollaborator(user.user_id)}
+                    className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 ml-2"
+                  >
+                    <FaPlus />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
       <table className="w-full table-auto">
         <thead>
           <tr>
@@ -164,41 +186,6 @@ const TeamManagement = () => {
           ))}
         </tbody>
       </table>
-      {selectedTeamId && (
-        <div className="mt-4">
-          <h3 className="text-xl font-bold">Agregar colaborador al equipo</h3>
-          <div className="flex mb-4">
-            <input
-              type="text"
-              placeholder="Nombre del usuario"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              className="flex-grow p-2 border border-gray-300 rounded-md"
-            />
-            <button
-              onClick={handleSearchUser}
-              className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 ml-2"
-            >
-              Buscar
-            </button>
-          </div>
-          {searchResults.length > 0 && (
-            <ul>
-              {searchResults.map((user) => (
-                <li key={user.user_id}>
-                  {user.name} {user.email}
-                  <button
-                    onClick={() => handleAddCollaborator(user.user_id)}
-                    className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 ml-2"
-                  >
-                    <FaPlus />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
     </div>
   );
 };
