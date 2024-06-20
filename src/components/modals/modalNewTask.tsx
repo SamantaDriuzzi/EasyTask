@@ -7,6 +7,7 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 import "react-quill/dist/quill.snow.css";
 import { getCollaboratorsByTeamId } from "@/helpers/teams/get";
 import { Collaborator } from "@/utils/types/interface-user";
+import { deleteTaskById } from "@/helpers/task/delete";
 
 interface ModalNewTaskProps {
   isVisible: { isOpen: boolean; selectedTask: Task | null };
@@ -40,7 +41,11 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
       : ""
   );
   const { selectedTask } = isVisible;
+  const [confirmText, setConfirmText] = useState('');
+  const [showConfirmInput, setShowConfirmInput] = useState(false);
 
+  
+  
   useEffect(() => {
     const fetchCollaborators = async () => {
       if (!collaboratorList.length) {
@@ -52,7 +57,7 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
     };
     fetchCollaborators();
   }, [idTeam, collaboratorList]);
-
+  
   const handleTaskToEdit = useCallback(async () => {
     if (selectedTask?.task_id) {
       setTaskName(selectedTask.name);
@@ -62,11 +67,11 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
       setStoryPoints(selectedTask.story_points);
     }
   }, [selectedTask]);
-
+  
   useEffect(() => {
     handleTaskToEdit();
   }, [handleTaskToEdit]);
-
+  
   const handleSave = () => {
     if (taskName) {
       const newTask: TaskData = {
@@ -80,12 +85,30 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
       onSave(newTask, selectedTask?.task_id || null);
     }
   };
-
+  
   const setCollaboratorId = (collaboratorId: string) => {
     setUserOwner(collaboratorId);
   };
-
+  
   if (!isVisible.isOpen) return null;
+  const handleDeleteClick = () => {
+    setShowConfirmInput(true);
+  };
+
+  const handleConfirmChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirmText(e.target.value);
+  };
+
+  const handleConfirmDelete = () => {
+    if (confirmText === "Borrar definitivamente la tarea") {
+      deleteTaskById(selectedTask?.task_id || '');
+      setShowConfirmInput(false);
+      setConfirmText('');
+      onClose();
+    } else {
+      alert('El texto de confirmación no es correcto.');
+    }
+  };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -184,6 +207,41 @@ const ModalNewTask: FC<ModalNewTaskProps> = ({
                   </option>
                 ))}
               </select>
+              
+              
+      {showConfirmInput ? (
+        <div className="mt-4 border border-red-500 rounded-lg p-4">
+          <label htmlFor="confirm-text" className="block mb-2 text-red-700">
+            Escriba: <span className="font-semibold">Borrar definitivamente la tarea</span>
+          </label>
+          <input 
+            id="confirm-text"
+            type="text" 
+            value={confirmText} 
+            onChange={handleConfirmChange} 
+            placeholder="Borrar definitivamente la tarea" 
+            className="w-full p-2 border border-gray-300 rounded-md bg-transparent placeholder-gray-500 focus:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button 
+            onClick={handleConfirmDelete} 
+            className="mt-2 w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+            Confirmar Borrar
+          </button>
+        </div>
+      ) : (
+        <button 
+          onClick={handleDeleteClick} 
+          className="text-gray-500 mt-4 text-red-700 font-bold border border-red-700 rounded-lg p-2 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500">
+          Borrar
+        </button>
+      )}
+    
+  
+
+
+  
+  
+            
             </div>
           </div>
         </div>
