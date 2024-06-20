@@ -4,7 +4,7 @@ import { FaUsers, FaUser, FaHeart } from "react-icons/fa";
 
 const Sidebar = () => {
   return (
-    <div className="bg-white w-1/4 h-screen p-4 shadow-lg mt-16">
+    <div className="bg-white w-1/4 h-screen p-4 shadow-lg mt-20">
       <ul className="space-y-4">
         <li>
           <Link href="/manager/users">
