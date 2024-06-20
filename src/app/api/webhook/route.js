@@ -28,9 +28,10 @@ export async function POST(request) {
                 const customer = await stripe.customers.retrieve(customerId);
                 const donationAmount = checkoutSessionCompleted.amount_total;
                 const donationDate = new Date(); 
+                const donationEmail = checkoutSessionCompleted.customer.email
 
                 // Guardar en la DB
-                await postNewDonation(customerId, donationAmount, donationDate)
+                await postNewDonation(customerId, donationAmount, donationDate, donationEmail)
 
                 // Usuario como donante en la DB -endpoint
                

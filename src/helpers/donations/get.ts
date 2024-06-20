@@ -9,7 +9,14 @@ export const getAllDonations = async () => {
       },
     });
     const data = await response.json();
-    return data;
+  
+    return data.map((donation: any) => ({
+      id: donation.donation_id,
+      user: donation.user,
+      amount: donation.amount,
+      date: donation.date,
+    }));
+  
   } catch (error: any) {
     throw new Error(error);
   }

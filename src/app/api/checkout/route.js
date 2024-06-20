@@ -17,6 +17,7 @@ export async function POST(request) {
                         currency: "usd",
                         product_data: {
                             name: body.name,
+                            email:body.email,
                         },
                         unit_amount: body.amount * 100,
                     },
@@ -24,8 +25,8 @@ export async function POST(request) {
                 },
             ],
             mode: "payment",
-            success_url: `${API_URL}/donations/success`,
-            cancel_url: `${API_URL}/donations/cancel`,
+            success_url: `${API_URL}donations/success`,
+            cancel_url: `${API_URL}donations/cancel`,
         });
 
         return NextResponse.json({ url: session.url });

@@ -25,6 +25,7 @@ const Donations = () => {
                 }
             });
 
+            console.log(res)
             if (!res.ok) {
                 const errorDetails = await res.json();
                 console.error('Error details:', errorDetails);

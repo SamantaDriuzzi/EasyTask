@@ -3,10 +3,10 @@ import { IDonation } from "@/utils/types/interface-donation";
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const postNewDonation = async (
-    customerId: string, donationAmount: number, donationDate: string
+    customerId: string, donationAmount: number, donationDate: string, donationEmail: string
 ) => {
   try {
-    const body = JSON.stringify({customerId, donationAmount, donationDate});
+    const body = JSON.stringify({customerId, donationAmount, donationDate, donationEmail});
     const response = await fetch(
       `${API_URL}/donation`,
       {
