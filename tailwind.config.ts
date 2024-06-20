@@ -19,7 +19,10 @@ const config: Config = {
         color8: "#CD9AE4",
         color9: "#1C1C1C",
         color10: "#e1baf5",
+        color11: "#C14242",
+        color12: "#378A40",
         grey: "#CCCCCC",
+        darkgrey: "#1C1C1C",
         white: "#FFFFFF",
         "blue-dark": "#1e3a8a",
         "blue-medium": "#60a5fa",
@@ -35,6 +38,15 @@ const config: Config = {
         "gradient-register":
           "linear-gradient(to bottom, #2F84A0 0%, #6048A4 50%, #353F98 100%)",
         "footer-gradient": "linear-gradient(180deg, #4A48A4, #634C84 100%)",
+      },
+      keyframes: {
+        scalePulse: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.25)' },
+        },
+      },
+      animation: {
+        scalePulse: 'scalePulse 1.5s ease-in-out infinite',
       },
     },
   },

@@ -55,7 +55,6 @@ const Board = ({ params }: { params: { idTeam: string } }) => {
         try {
           const teamInfo = await getTeamById(teamID);
           setTeam(teamInfo);
-          console.log("info del equipo:   ::::::", teamInfo);
         } catch (error) {
           console.error("Error fetching team info:", error);
         }

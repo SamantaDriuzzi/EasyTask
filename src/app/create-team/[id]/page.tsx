@@ -73,7 +73,6 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
           created_date: new Date(),
           finish_date: new Date(),
         });
-        console.log("id del equipo creado", response.team_id);
         alert("Equipo creado correctamente ✅");
         setModalVisible(true);
       } else {
