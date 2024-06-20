@@ -3,7 +3,6 @@ import Logo from "@/components/logo";
 import ModalJoinTeam from "@/components/modals/modalJoinTeam";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { postJoinTeam } from "@/helpers/teams/post";
-import Image from "next/image";
 import React, { useState } from "react";
 
 const UneteAUnEquipoPage = () => {
