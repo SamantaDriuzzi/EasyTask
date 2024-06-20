@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FaGoogle } from "react-icons/fa";
+import { FaArrowCircleLeft, FaGoogle } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -33,6 +33,9 @@ const LoginPage = () => {
   const [loginError, setLoginError] = useState("");
 
   const router = useRouter();
+  const handleBackClick = () => {
+    router.push("/");
+  };
 
   const onSubmit = async (data: any) => {
     try {
@@ -150,7 +153,7 @@ const LoginPage = () => {
             </button>
           </div>
           <div className="text-center text-sm text-gray-600">
-            <span>You do not have an account? </span>
+            <span>¿No estás registrado? </span>
             <Link
               href="/register"
               className="font-medium text-indigo-600 hover:text-indigo-500"
@@ -159,6 +162,14 @@ const LoginPage = () => {
             </Link>
           </div>
         </form>
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={handleBackClick}
+            className="w-1/4 lg:w-1/4 bg-color3 hover:bg-color-button-hover text-black text-md font-bold py-2 px-4 rounded-lg flex items-center justify-center"
+          >
+            <FaArrowCircleLeft className="mr-2" /> Salir
+          </button>
+        </div>
       </div>
     </div>
   );

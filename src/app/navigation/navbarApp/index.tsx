@@ -1,15 +1,14 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useEffect, useCallback } from "react";
-import LogoutButton from "@/components/LogoutButton";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contextLogin/AuthContext";
-import { getMyTeams } from "@/helpers/teams/get";
 import { Team } from "@/utils/types/interface-team";
+import Dashboard from "./userDashboard";
 
 const NavbarApp = () => {
   const router = useRouter();
+
   const { userIdFromToken, teams, fetchTeams } = useAuth();
   const id = userIdFromToken();
 
@@ -22,8 +21,6 @@ const NavbarApp = () => {
       handleCreateTeam();
     } else if (value === "joinTeam") {
       handleJoinTeam();
-    } else if (value === "infoTeam") {
-      handleInfoTeam();
     } else {
       handleTeamBoard(value);
     }
@@ -67,9 +64,7 @@ const NavbarApp = () => {
             className="bg-color5 text-gray-100 hover:text-white hover:underline transition duration-300"
             defaultValue=""
           >
-            <option value="" disabled>
-              Tablero
-            </option>
+            <option value="">Tablero</option>
             {teams.map((team: Team) => (
               <option key={team.team_id} value={team.team_id}>
                 {team.team_name}
@@ -79,15 +74,11 @@ const NavbarApp = () => {
           <select
             onChange={handleSelectChange}
             className="bg-color5 text-gray-100 hover:text-white hover:underline transition duration-300"
-            defaultValue=""
+            defaultValue="Panel de Equipos"
           >
-            <option value="" disabled>
-              Panel de Equipos
-            </option>
-            <option value="myTeams">Mis Equipos</option>
             <option value="createTeam">Crear un equipo</option>
+            <option value="myTeams">Mis Equipos</option>
             <option value="joinTeam">Unirse a un equipo</option>
-            <option value="infoTeam">Información de equipo</option>
           </select>
           <Link
             href="/donations"
@@ -96,7 +87,8 @@ const NavbarApp = () => {
             Donaciones
           </Link>
         </nav>
-        <LogoutButton />
+
+        <Dashboard />
       </div>
     </div>
   );

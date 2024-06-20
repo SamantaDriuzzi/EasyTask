@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuth } from "@/contextLogin/AuthContext";
 import { postNewSprint } from "@/helpers/sprint/post";
 import React, { useEffect, useState } from "react";
 import { getAllSprintByTeam } from "@/helpers/sprint/get";
