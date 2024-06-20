@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { useRouter } from "next/navigation";
+import TotalButton from '@/components/donationsButton/totalButton';
 
 const Donations = () => {
   const router = useRouter();
@@ -28,11 +29,11 @@ const Donations = () => {
         },
       });
 
-      if (!res.ok) {
-        const errorDetails = await res.json();
-        console.error("Error details:", errorDetails);
-        throw new Error("Network response was not ok");
-      }
+            if (!res.ok) {
+                const errorDetails = await res.json();
+                console.error('Error details:', errorDetails);
+                throw new Error('Network response was not ok');
+            }
 
       const session = await res.json();
 
@@ -91,63 +92,40 @@ const Donations = () => {
             className="mb-4 p-2 text-[black]"
           />
 
-          <button
-            onClick={handlePay}
-            className="bg-red-500 p-2 text-white rounded hover:bg-red-600"
-          >
-            ¡DONA AQUÍ!
-          </button>
-        </div>
-        <div className=" flex flex-col items-center mt-10 my-5 py-2 bg-yellow-50 w-full text-black">
-          <h2>
-            AL llegar al monto del objetivo se desbloqueará una nueva
-            funcionalidad para todos!
-          </h2>
-          <h2>Sumemos nuestros aportes!</h2>
-        </div>
-        <div className="flex justify-center items-start text-3xl w-2/4 mt-8 transition-transform duration-300 transform hover:scale-125 ">
-          <Image
-            className="flex"
-            src="/donations/objetivo.svg"
-            alt="objetivo"
-            height={60}
-            width={60}
-          />
-          <div className="flex flex-col">
-            <h2 className="pt-2 pb-7">PRÓXIMOS OBJETIVOS:</h2>
-            <ul className="text-2xl">
-              <li className="flex justify-between">
-                <p>Votación de tareas</p>
-                <div className="flex">
-                  <Image
-                    className="flex justify-between mx-5"
-                    src="/donations/corazon.svg"
-                    alt="corazon"
-                    height={20}
-                    width={20}
-                  />
-                  <p>300 USD</p>
+                    <button onClick={handlePay} className="bg-red-500 p-2 text-white rounded hover:bg-red-600">¡DONA AQUÍ!</button>
                 </div>
-              </li>
-              <li className="flex justify-between">
-                <p>App traducida al inglés</p>
-                <div className="flex">
-                  <Image
-                    className="flex justify-evenly mx-5"
-                    src="/donations/corazon.svg"
-                    alt="corazon"
-                    height={20}
-                    width={20}
-                  />
-                  <p>500 USD</p>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-    </>
-  );
+                  <div className=' flex flex-col items-center mt-10 my-5 py-2 bg-yellow-50 w-full text-black'>
+                        <h2>AL llegar al monto del objetivo se desbloqueará una nueva funcionalidad para todos!</h2>
+                        <h2>Sumemos nuestros aportes!</h2>
+                    </div>
+                    <div className="flex justify-center items-start text-3xl w-2/4 mt-8 transition-transform duration-300 transform hover:scale-125 ">
+                        <Image className="flex" src="/donations/objetivo.svg" alt="objetivo" height={60} width={60} />
+                        <div className="flex flex-col">
+                            <h2 className="pt-2 pb-7">PRÓXIMOS OBJETIVOS:</h2>
+                            <ul className="text-2xl">
+                                <li className="flex justify-between">
+                                    <p>Votación de tareas</p>
+                                    <div className="flex">
+                                        <Image className="flex justify-between mx-5" src="/donations/corazon.svg" alt="corazon" height={20} width={20} />
+                                        <p>300 USD</p>
+                                    </div>
+                                </li>
+                                <li className="flex justify-between">
+                                    <p>App traducida al inglés</p>
+                                    <div className="flex">
+                                        <Image className="flex justify-evenly mx-5" src="/donations/corazon.svg" alt="corazon" height={20} width={20} />
+                                        <p>500 USD</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                    </div>
+                  
+            
+            </section>
+        </>
+    );
 };
 
 export default Donations;

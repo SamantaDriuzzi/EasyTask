@@ -7,6 +7,7 @@ import { useAuth } from "@/contextLogin/AuthContext";
 import { useRouter } from "next/navigation";
 import { getUserById } from "@/helpers/users/get";
 import { User } from "@/utils/types/interface-user";
+import Swal from "sweetalert2";
 
 const ManagerPage = () => {
   const router = useRouter();
@@ -25,7 +26,10 @@ const ManagerPage = () => {
         try {
           const userAdmin: User = await getUserById(id);
           if (userAdmin.is_admin === false) {
-            alert("No eres administrador");
+            Swal.fire({
+              icon: "error",
+              title: "No eres administrador",
+            });
             router.push("/");
           }
         } catch (error) {

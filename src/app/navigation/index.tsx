@@ -6,7 +6,7 @@ import NavbarApp from './navbarApp';
 export const Navigation = () => {
   const pathname = usePathname();
 
-  if (pathname === '/login' || pathname === '/register' || pathname === '/donations/success') {
+  if (pathname === '/login' || pathname === '/register' || pathname === '/donations/success' || pathname === '/donations/cancel') {
     return null; 
   }
 
