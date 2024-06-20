@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { getUserById } from "@/helpers/users/get";
 import { User } from "@/utils/types/interface-user";
+import Swal from "sweetalert2";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -118,7 +119,10 @@ const PageMyAccount = () => {
       }
       setUser(updatedUser);
       setIsEditing({ name: false, email: false, nickname: false });
-      alert("Datos actualizados con éxito");
+      Swal.fire({
+        icon: "success",
+        title: "Datos actualizados con éxito!",
+      });
     } catch (error) {
       console.error("Error updating user data:", error);
     }
@@ -144,15 +148,24 @@ const PageMyAccount = () => {
         );
         const result = await response.json();
         setProfileImage(result.url);
-        alert("Imagen subida con éxito");
+        Swal.fire({
+          icon: "success",
+          title: "Imagen subida con éxito!",
+        });
       } catch (error) {
         console.error("Error uploading image:", error);
-        alert("Error al subir la imagen");
+
+        Swal.fire({
+          icon: "error",
+          title: "Error al subir la imagen",
+        });
+
       }
     } else {
-      alert(
-        "No se ha seleccionado una imagen o el ID de usuario no es válido."
-      );
+      Swal.fire({
+        icon: "error",
+        title: "No se ha seleccionado una imagen o el ID de usuario no es válido",
+      });
     }
   };
 

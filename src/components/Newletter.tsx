@@ -21,13 +21,13 @@ const Newsletter = ({ onClose }: { onClose: () => void }) => {
     if (response.ok) {
       Swal.fire({
         icon: "success",
-        title: "Subscripción exitosa! 😊",
+        title: "Subscripción exitosa!",
       });
       onClose();
     } else {
       Swal.fire({
         icon: "error",
-        title: "Subscripción fallida 😞",
+        title: "Subscripción fallida",
       });
     }
   };
