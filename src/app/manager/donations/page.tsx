@@ -1,16 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import UserNameWithStar from "@/components/starUser";
-import { useDonors } from "@/contextDonators";
-import { useAuth } from "@/contextLogin/AuthContext";
 import { getAllDonations } from "@/helpers/donations/get";
 import { IDonation } from "@/utils/types/interface-donation";
 
 const Donations = () => {
   const [donations, setDonations] = useState<IDonation[]>([]);
   const [totalAmount, setTotalAmount] = useState<number | null>(null);
-  const { user: authUser } = useAuth();
-  const { donors } = useDonors();
 
   useEffect(() => {
     const fetchDonations = async () => {
@@ -30,8 +25,6 @@ const Donations = () => {
 
     calculateTotalAmount();
   }, [donations]);
-
-  const isDonor = donors.some(donor => donor.credentials.email === authUser.email);
 
   return (
     <div className="p-6">
@@ -56,7 +49,7 @@ const Donations = () => {
               donations.map((donation: IDonation) => (
                 <tr key={donation.donation_id}>
                   <td className="py-3 px-4">
-                    <UserNameWithStar name={authUser.name} isDonor={isDonor} />
+                    {donation.user.name}
                   </td>
                   <td className="py-3 px-4">
                     {donation.user.credentials.email}
