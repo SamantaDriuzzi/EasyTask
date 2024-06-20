@@ -13,6 +13,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { getUserById } from "@/helpers/users/get";
 
 interface AuthContextProps {
   user: any;
@@ -60,7 +61,7 @@ export const AuthProvider = ({ children }: any) => {
     await signOut({ redirect: false });
     localStorage.removeItem("user");
     localStorage.removeItem("userSession");
-    window.location.href = "/login";
+    window.location.href = "/";
   };
 
   const userIdFromToken = useCallback(() => {

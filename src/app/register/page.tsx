@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { FaGoogle } from "react-icons/fa";
+import { FaArrowCircleLeft, FaGoogle } from "react-icons/fa";
 import ReactPasswordChecklist from "react-password-checklist";
 import { signIn, useSession } from "next-auth/react";
 
@@ -26,8 +26,6 @@ const Register = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);
-
-  const { data: session } = useSession();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -82,6 +80,10 @@ const Register = () => {
         alert("❗ Hay errores en el formulario.");
       }
     }
+  };
+
+  const handleBackClick = () => {
+    router.push("/");
   };
 
   const toggleShowPassword = () => {
@@ -233,6 +235,14 @@ const Register = () => {
             className="w-full lg:w-3/4 bg-color-button hover:bg-color-button-hover text-black text-xl font-bold py-3 px-6 rounded-lg flex items-center justify-center"
           >
             <FaGoogle className="mr-2" /> Registrarse con Google
+          </button>
+        </div>
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={handleBackClick}
+            className="w-1/4 lg:w-1/4 bg-color3 hover:bg-color-button-hover text-black text-md font-bold py-2 px-4 rounded-lg flex items-center justify-center"
+          >
+            <FaArrowCircleLeft className="mr-2" /> Volver
           </button>
         </div>
       </div>

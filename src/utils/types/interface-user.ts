@@ -7,17 +7,18 @@ interface Credential {
 }
 
 export interface User {
-  user_id: string;
-  token: string;
-  name: string;
   created: Date;
+  credentials: Credential;
+  deletedAt: Date;
+  is_admin: boolean;
   last_login: Date;
-  status: boolean;
+  name: string;
   profilePicture: string;
+  status: boolean;
   tasks: string[];
   teams: string[];
-  deletedAt: Date;
-  credentials: Credential;
+  token: string;
+  user_id: string;
 }
 
 export interface Collaborator {
