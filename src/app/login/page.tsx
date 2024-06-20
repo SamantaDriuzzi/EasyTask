@@ -9,6 +9,7 @@ import * as yup from "yup";
 import Image from "next/image";
 import Logo from "@/components/logo";
 import { signIn } from "next-auth/react";
+import Swal from "sweetalert2";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -54,7 +55,10 @@ const LoginPage = () => {
       const result = await response.json();
       const { token } = result;
       localStorage.setItem("userSession", JSON.stringify({ token: token }));
-      alert("Ingresaste con éxito");
+      Swal.fire({
+        icon: "success",
+        title: "Ingresaste con éxito!"
+      });
       setTimeout(() => {
         router.push("/home");
       }, 1000);

@@ -4,6 +4,7 @@ import ModalJoinTeam from "@/components/modals/modalJoinTeam";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { postJoinTeam } from "@/helpers/teams/post";
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 const UneteAUnEquipoPage = () => {
   const [invitationCode, setInvitationCode] = useState("");
@@ -24,12 +25,18 @@ const UneteAUnEquipoPage = () => {
       const info = { userid: userId, code: invitationCode };
       const data = await postJoinTeam(info);
       if (data && data.team.team_id && data.team.team_name) {
-        alert("Te sumaste al equipo ✅");
+        Swal.fire({
+          icon: "success",
+          title: "Te sumaste al equipo!"
+        });
         setTeamName(data.team.team_name);
         openModal();
         setInvitationCode("");
       } else {
-        alert("Hubo un error al unirse ❌");
+        Swal.fire({
+          icon: "error",
+          title: "Hubo un error al unirse"
+        });
       }
     } catch (error) {
       console.error("Error al unirse al equipo:", error);

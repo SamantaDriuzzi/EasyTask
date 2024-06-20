@@ -6,6 +6,7 @@ import Image from "next/image";
 import { getUserById } from "@/helpers/users/get";
 import { User } from "@/utils/types/interface-user";
 import ModalInviteCode from "@/components/modals/modalInviteCode";
+import Swal from "sweetalert2";
 
 const CreateTeam = ({ params }: { params: { id: string } }) => {
   const [userId, setUserId] = useState<string | null>("");
@@ -62,7 +63,10 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!userId) {
-      alert("User ID is not available");
+      Swal.fire({
+        icon: "warning",
+        title: "La identificación de usuario no está disponible"
+      });
       return;
     }
     try {
@@ -76,12 +80,17 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
           created_date: new Date(),
           finish_date: new Date(),
         });
-
-        alert("Equipo creado correctamente ✅");
+        Swal.fire({
+          icon: "success",
+          title: "Equipo creado correctamente"
+        });
         setShowInviteCode(true);
         openModal();
       } else {
-        alert("Error al crear el equipo");
+        Swal.fire({
+          icon: "error",
+          title: "Error al crear el equipo"
+        });
       }
     } catch (error) {
       console.error("Error al crear el equipo:", error);

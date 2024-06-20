@@ -11,6 +11,7 @@ import { FormEvent, useState } from "react";
 import { FaArrowCircleLeft, FaGoogle } from "react-icons/fa";
 import ReactPasswordChecklist from "react-password-checklist";
 import { signIn, useSession } from "next-auth/react";
+import Swal from "sweetalert2";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -67,17 +68,27 @@ const Register = () => {
             console.log("Response register:", response);
             return response.json();
           });
-
-          alert("Registro exitoso ✅");
+          Swal.fire({
+            icon: "success",
+            title: "Registro exitoso!"
+          });
           setTimeout(() => {
             router.push("/login");
           }, 1000);
         } catch (error) {
           console.error("Error en el registro:", error);
-          alert("Error en el registro. Por favor, intenta nuevamente.");
+          Swal.fire({
+            icon: "error",
+            title: "Error en el registro",
+            text: "Por favor, intenta nuevamente"
+          });
         }
       } else {
-        alert("❗ Hay errores en el formulario.");
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Hay errores en el formulario"
+        });
       }
     }
   };
