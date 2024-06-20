@@ -8,7 +8,7 @@ import React, { useState } from "react";
 import Swal from "sweetalert2";
 
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 
 const UneteAUnEquipoPage = () => {
