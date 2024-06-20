@@ -75,7 +75,6 @@ const PageMyAccount = () => {
   useEffect(() => {
     const loadUserData = async () => {
       const userId = userIdFromToken();
-      console.log(userId);
       if (userId) {
         try {
           const user = await getUserById(userId);
@@ -135,7 +134,7 @@ const PageMyAccount = () => {
 
     if (file && userId) {
       const formData = new FormData();
-      formData.append("profilePicture", file);
+      formData.append("image", file);
 
       console.log("data antes de enviar foto:::::", formData);
 
@@ -155,10 +154,12 @@ const PageMyAccount = () => {
         });
       } catch (error) {
         console.error("Error uploading image:", error);
+
         Swal.fire({
           icon: "error",
           title: "Error al subir la imagen",
         });
+
       }
     } else {
       Swal.fire({
