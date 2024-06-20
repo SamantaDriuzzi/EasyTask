@@ -7,8 +7,19 @@ import { getUserById } from "@/helpers/users/get";
 import { User } from "@/utils/types/interface-user";
 import ModalInviteCode from "@/components/modals/modalInviteCode";
 import Swal from "sweetalert2";
+import { useAuth } from "@/contextLogin/AuthContext";
+import { useRouter } from "next/navigation";
 
 const CreateTeam = ({ params }: { params: { id: string } }) => {
+  const router = useRouter();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+    }
+  }, [validateUserSession, router]);
+
   const [userId, setUserId] = useState<string | null>("");
   const [user, setUser] = useState<User | null>(null);
   const [teamData, setTeamData] = useState<TeamCrate>({
