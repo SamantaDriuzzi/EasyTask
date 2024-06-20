@@ -2,8 +2,19 @@
 
 import React from "react";
 import { FaTrash, FaPlus } from "react-icons/fa";
+import { useEffect } from "react";
+import { useAuth } from "@/contextLogin/AuthContext";
+import { useRouter } from "next/navigation";
 
 const ManagerPage = () => {
+  const router = useRouter();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+    }
+  }, [validateUserSession, router]);
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-[#B4B3EA] py-10 mt-10">

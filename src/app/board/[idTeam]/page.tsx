@@ -12,6 +12,9 @@ import { putTask } from "@/helpers/task/put";
 import { Sprint } from "@/utils/types/interface-sprint";
 import { getTeamById } from "@/helpers/teams/get";
 import { Team } from "@/utils/types/interface-team";
+import { useEffect } from "react";
+import { useAuth } from "@/contextLogin/AuthContext";
+import { useRouter } from "next/navigation";
 
 const initialTasks: {
   open: Task[];
@@ -26,6 +29,14 @@ const initialTasks: {
 };
 
 const Board = ({ params }: { params: { idTeam: string } }) => {
+  const router = useRouter();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+    }
+  }, [validateUserSession, router]);
   const [teamID, setTeamID] = useState<string | null>(null);
   useEffect(() => {
     setTeamID(params.idTeam);

@@ -3,9 +3,18 @@ import Logo from "@/components/logo";
 import ModalJoinTeam from "@/components/modals/modalJoinTeam";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { postJoinTeam } from "@/helpers/teams/post";
-import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const UneteAUnEquipoPage = () => {
+  const router = useRouter();
+  const { validateUserSession } = useAuth();
+  useEffect(() => {
+    const userSession = validateUserSession();
+    if (!userSession) {
+      router.push("/login");
+    }
+  }, [validateUserSession, router]);
   const [invitationCode, setInvitationCode] = useState("");
   const { userIdFromToken } = useAuth();
   const userId = userIdFromToken();
