@@ -5,16 +5,38 @@ import { FaTrash, FaPlus } from "react-icons/fa";
 import { useEffect } from "react";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { useRouter } from "next/navigation";
+import { getUserById } from "@/helpers/users/get";
+import { User } from "@/utils/types/interface-user";
 
 const ManagerPage = () => {
   const router = useRouter();
-  const { validateUserSession } = useAuth();
+  const { validateUserSession, userIdFromToken } = useAuth();
+
   useEffect(() => {
-    const userSession = validateUserSession();
-    if (!userSession) {
-      router.push("/login");
-    }
-  }, [validateUserSession, router]);
+    const validateSessionAndAdminStatus = async () => {
+      const userSession = validateUserSession();
+      if (!userSession) {
+        router.push("/login");
+        return;
+      }
+
+      const id = userIdFromToken();
+      if (id) {
+        try {
+          const userAdmin: User = await getUserById(id);
+          if (userAdmin.is_admin === false) {
+            alert("No eres administrador");
+            router.push("/");
+          }
+        } catch (error) {
+          console.error("Error al obtener el usuario:", error);
+        }
+      }
+    };
+
+    validateSessionAndAdminStatus();
+  }, [userIdFromToken, validateUserSession, router]);
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="bg-[#B4B3EA] py-10 mt-10">

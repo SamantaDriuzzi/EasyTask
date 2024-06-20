@@ -13,6 +13,7 @@ const UneteAUnEquipoPage = () => {
     const userSession = validateUserSession();
     if (!userSession) {
       router.push("/login");
+      return;
     }
   }, [validateUserSession, router]);
   const [invitationCode, setInvitationCode] = useState("");

@@ -7,13 +7,7 @@ import { useRouter } from "next/navigation";
 
 const Donations = () => {
   const router = useRouter();
-  const { validateUserSession } = useAuth();
-  useEffect(() => {
-    const userSession = validateUserSession();
-    if (!userSession) {
-      router.push("/login");
-    }
-  }, [validateUserSession, router]);
+  
   const [amount, setAmount] = useState("");
 
   const donation = {

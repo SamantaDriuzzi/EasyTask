@@ -12,7 +12,7 @@ import { putTask } from "@/helpers/task/put";
 import { Sprint } from "@/utils/types/interface-sprint";
 import { getTeamById } from "@/helpers/teams/get";
 import { Team } from "@/utils/types/interface-team";
-import { useEffect } from "react";
+
 import { useAuth } from "@/contextLogin/AuthContext";
 import { useRouter } from "next/navigation";
 

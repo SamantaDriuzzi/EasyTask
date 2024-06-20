@@ -16,7 +16,7 @@ const Home = () => {
     if (!userSession) {
       router.push("/login");
     }
-  }, [validateUserSession, router]);
+  }, [router, validateUserSession]);
 
   const handleMyTeams = () => {
     router.push(`/my-teams/${id}`);
