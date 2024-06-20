@@ -59,7 +59,7 @@ const Dashboard = () => {
             {userData ? (
               <button
                 className="text-white py-2 px-2 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer"
-                onClick={() => handlePageChange("profile")}
+                onClick={() => handlePageChange("userdashboard")}
               >
                 MI PERFIL
               </button>

@@ -10,91 +10,115 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useAuth } from "@/contextLogin/AuthContext";
+import { getUserById } from "@/helpers/users/get";
+import { User } from "@/utils/types/interface-user";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+interface UserData {
+  name: string;
+  email: string;
+  nickname: string;
+}
+
+const EditableField = ({
+  label,
+  value,
+  isEditing,
+  onEdit,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  isEditing: boolean;
+  onEdit: () => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}) => (
+  <div className="mb-4">
+    <label className="block text-gray-700">{label}:</label>
+    {isEditing ? (
+      <div className="flex items-center">
+        <input
+          type="text"
+          value={value}
+          onChange={onChange}
+          className="flex-grow p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+    ) : (
+      <div className="flex items-center">
+        <p className="bg-gray-200 p-2 rounded-md flex-grow">{value}</p>
+        <FontAwesomeIcon
+          icon={faPen}
+          className="ml-2 cursor-pointer"
+          onClick={onEdit}
+        />
+      </div>
+    )}
+  </div>
+);
+
 const PageMyAccount = () => {
-  const { user, setUser, userIdFromToken } = useAuth();
-  const [name, setName] = useState("👤");
-  const [email, setEmail] = useState("{}");
-  const [nickname, setNickname] = useState("👤");
-  const [isEditing, setIsEditing] = useState<{ [key: string]: boolean }>({
-    name: false,
-    email: false,
-    nickname: false,
-  });
+  const { userIdFromToken } = useAuth();
+  const [user, setUser] = useState<User | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState<{
+    [key in keyof UserData]: boolean;
+  }>({ name: false, email: false, nickname: false });
+  const [formData, setFormData] = useState<UserData>({
+    name: "",
+    email: "",
+    nickname: "",
+  });
 
   useEffect(() => {
     const loadUserData = async () => {
       const userId = userIdFromToken();
+      console.log(userId);
       if (userId) {
         try {
-          const response = await fetch(`${API_URL}/users/${userId}`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${user?.token}`,
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error("Error fetching user data");
+          const user = await getUserById(userId);
+          if (user) {
+            setUser(user);
+            setFormData({
+              name: user.name || "👤",
+              email: user.credentials.email || "email@email.com",
+              nickname: user.credentials.nickname || "👤",
+            });
+            setProfileImage(user.profilePicture || null);
           }
-
-          const userData = await response.json();
-          setUser(userData);
-          setName(userData.name || "👤");
-          setEmail(userData.email || "email@email.com");
-          setNickname(userData.nickname || "👤");
-          setProfileImage(userData.profileImage || null);
         } catch (error) {
           console.error("Error fetching user data:", error);
         }
       }
     };
+    loadUserData();
+  }, [userIdFromToken]);
 
-    if (user) {
-      setName(user.name || "👤");
-      setEmail(user.credentials.email || "email@email.com");
-      setNickname(user.credentials.nickname || "👤");
-      setProfileImage(user.profilePicture || null);
-    } else {
-      loadUserData();
-    }
-  }, [user, userIdFromToken]);
-
-  const handleEdit = (field: string) => {
-    setIsEditing({ ...isEditing, [field]: !isEditing[field] });
+  const handleEdit = (field: keyof UserData) => {
+    setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleSave = async (field: string) => {
-    setIsEditing({ ...isEditing, [field]: false });
+  const handleSave = async () => {
     const userId = userIdFromToken();
-    if (!user || !user.token || !userId) {
-      console.error("User not authenticated");
-      return;
-    }
+
+    if (!userId) return;
 
     try {
       const response = await fetch(`${API_URL}/users/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
         },
-        body: JSON.stringify({
-          [field]:
-            field === "name" ? name : field === "email" ? email : nickname,
-        }),
+        body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
+      const updatedUser = await response.json();
+      if (response.status !== 200) {
         throw new Error("Error updating user data");
       }
-
-      const updatedUser = await response.json();
       setUser(updatedUser);
+      setIsEditing({ name: false, email: false, nickname: false });
       alert("Datos actualizados con éxito");
     } catch (error) {
       console.error("Error updating user data:", error);
@@ -104,36 +128,32 @@ const PageMyAccount = () => {
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     const userId = userIdFromToken();
-    if (!user || !user.token || !userId) {
-      console.error("User not authenticated");
-      return;
-    }
 
-    if (file) {
+    if (file && userId) {
       const formData = new FormData();
       formData.append("profilePicture", file);
 
+      console.log("data antes de enviar foto:::::", formData);
+
       try {
-        const response = await fetch(`${API_URL}/files/profilePicture?userId=${userId}`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-          body: formData,
-        });
-
-        if (!response.ok) {
-          const errorMessage = await response.text();
-          throw new Error(`Error uploading image: ${errorMessage}`);
-        }
-
+        const response = await fetch(
+          `${API_URL}/files/profilePicture?id=${userId}`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
         const result = await response.json();
         setProfileImage(result.url);
-        setUser({ ...user, profileImage: result.url });
         alert("Imagen subida con éxito");
       } catch (error) {
         console.error("Error uploading image:", error);
+        alert(`Error al subir la imagen`);
       }
+    } else {
+      alert(
+        "No se ha seleccionado una imagen o el ID de usuario no es válido."
+      );
     }
   };
 
@@ -182,96 +202,34 @@ const PageMyAccount = () => {
             </div>
             <h3 className="text-xl font-bold mb-4">Mis datos:</h3>
             <div className="w-full max-w-sm">
+              <EditableField
+                label="Nombre"
+                value={formData.name}
+                isEditing={isEditing.name}
+                onEdit={() => handleEdit("name")}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+              />
               <div className="mb-4">
-                <label className="block text-gray-700">Nombre:</label>
-                {isEditing.name ? (
-                  <div className="flex items-center">
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="flex-grow p-2 border border-gray-300 rounded-md"
-                    />
-                    <button
-                      onClick={() => handleSave("name")}
-                      className="ml-2 bg-blue-700 text-white p-2 rounded-md hover:bg-blue-600"
-                    >
-                      Guardar
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <p className="bg-gray-200 p-2 rounded-md flex-grow">
-                      {name}
-                    </p>
-                    <FontAwesomeIcon
-                      icon={faPen}
-                      className="ml-2 cursor-pointer"
-                      onClick={() => handleEdit("name")}
-                    />
-                  </div>
-                )}
+                <label className="block text-gray-700">Email:</label>
+                <div className="flex items-center">
+                  <input
+                    disabled
+                    value={formData.email}
+                    className="flex-grow p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
               </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Mail:</label>
-                {isEditing.email ? (
-                  <div className="flex items-center">
-                    <input
-                      type="text"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="flex-grow p-2 border border-gray-300 rounded-md"
-                    />
-                    <button
-                      onClick={() => handleSave("email")}
-                      className="ml-2 bg-blue-700 text-white p-2 rounded-md hover:bg-blue-600"
-                    >
-                      Guardar
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <p className="bg-gray-200 p-2 rounded-md flex-grow">
-                      {email}
-                    </p>
-                    <FontAwesomeIcon
-                      icon={faPen}
-                      className="ml-2 cursor-pointer"
-                      onClick={() => handleEdit("email")}
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Nickname:</label>
-                {isEditing.nickname ? (
-                  <div className="flex items-center">
-                    <input
-                      type="text"
-                      value={nickname}
-                      onChange={(e) => setNickname(e.target.value)}
-                      className="flex-grow p-2 border border-gray-300 rounded-md"
-                    />
-                    <button
-                      onClick={() => handleSave("nickname")}
-                      className="ml-2 bg-blue-700 text-white p-2 rounded-md hover:bg-blue-600"
-                    >
-                      Guardar
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <p className="bg-gray-200 p-2 rounded-md flex-grow">
-                      {nickname}
-                    </p>
-                    <FontAwesomeIcon
-                      icon={faPen}
-                      className="ml-2 cursor-pointer"
-                      onClick={() => handleEdit("nickname")}
-                    />
-                  </div>
-                )}
-              </div>
+              <EditableField
+                label="Nickname"
+                value={formData.nickname}
+                isEditing={isEditing.nickname}
+                onEdit={() => handleEdit("nickname")}
+                onChange={(e) =>
+                  setFormData({ ...formData, nickname: e.target.value })
+                }
+              />
               <div className="flex space-x-4">
                 <Link href="/userdashboard/change-password">
                   <button className="bg-teal-500 text-white p-2 rounded-md hover:bg-violet-400 flex items-center">
@@ -280,10 +238,7 @@ const PageMyAccount = () => {
                 </Link>
                 <button
                   className="bg-teal-500 text-white p-2 rounded-md hover:bg-violet-400"
-                  onClick={() => {
-                    handleSave("name");
-                    handleSave("nickname");
-                  }}
+                  onClick={handleSave}
                 >
                   Guardar cambios
                 </button>

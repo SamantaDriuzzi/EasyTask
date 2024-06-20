@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Logo from "@/components/logo";
 import { useAuth } from "@/contextLogin/AuthContext";
+import { getUserById } from "@/helpers/users/get";
+import { User } from "@/utils/types/interface-user";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -15,27 +17,24 @@ const ChangePassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { user } = useAuth();
-
+  const [user, setUser] = useState<User>();
+  const { userIdFromToken } = useAuth();
+  const id = userIdFromToken();
   useEffect(() => {
-    if (!user) {
-      setErrorMessage("Usuario no autenticado.");
-    } else {
-      setErrorMessage("");
-    }
-  }, [user]);
+    const fetchUser = async () => {
+      if (id) {
+        try {
+          const fetchedUser = await getUserById(id);
+          setUser(fetchedUser);
+        } catch (error) {
+          console.error("Error fetching user:", error);
+        }
+      }
+    };
+    fetchUser();
+  }, [id]);
 
   const handleSavePassword = async () => {
-    if (!user) {
-      setErrorMessage("Usuario no autenticado.");
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      setErrorMessage("Las nuevas contraseñas no coinciden.");
-      return;
-    }
-
     try {
       const response = await fetch(`${API_URL}/auth/changePassword`, {
         method: "PUT",
@@ -46,16 +45,16 @@ const ChangePassword = () => {
           }`,
         },
         body: JSON.stringify({
-          email: user.email,
+          email: user?.credentials.email,
           password: currentPassword,
           newPassword,
         }),
       });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Error al cambiar la contraseña");
-      }
+      //
+      //       if (!response.ok) {
+      //         const data = await response.json();
+      //         throw new Error(data.message || "Error al cambiar la contraseña");
+      //       }
 
       alert("Contraseña cambiada con éxito");
       setErrorMessage("");
