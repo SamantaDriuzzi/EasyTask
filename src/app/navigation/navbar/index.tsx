@@ -25,7 +25,7 @@ const Navbar = () => {
             Nosotros
           </a>
           <a
-            href="#section-donations"
+            href="/donations"
             className="hover:text-gray-200 transition duration-300"
           >
             Donaciones

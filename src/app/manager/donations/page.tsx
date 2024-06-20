@@ -5,21 +5,26 @@ import { IDonation } from "@/utils/types/interface-donation";
 
 const Donations = () => {
   const [donations, setDonations] = useState<IDonation[]>([]);
-  const [totalAmount, setTotalAmount] = useState<number | null>(null);
+  const [totalAmount, setTotalAmount] = useState<number>(0);
 
   useEffect(() => {
     const fetchDonations = async () => {
       const donationsData = await getAllDonations();
       setDonations(donationsData);
     };
-    console.log(getAllDonations)
     fetchDonations();
   }, []);
 
-
   useEffect(() => {
     const calculateTotalAmount = () => {
-      const total = donations.reduce((acc, donation) => acc + donation.amount, 0);
+      const total = donations.reduce((acc, donation) => {
+        // Convert donation.amount to number before adding to acc
+        const amount =
+          typeof donation.amount === "string"
+            ? parseFloat(donation.amount)
+            : donation.amount;
+        return acc + amount;
+      }, 0);
       setTotalAmount(total);
     };
 
@@ -31,7 +36,8 @@ const Donations = () => {
       <header className="flex justify-between items-center bg-[#B4B3EA] text-white p-4 rounded-md">
         <h1 className="text-xl font-semibold">Donaciones</h1>
         <div className="bg-yellow-400 text-black px-4 py-2 rounded-md">
-          <span>TOTAL:</span> <span className="font-bold">{totalAmount} USD</span>
+          <span>TOTAL:</span>{" "}
+          <span className="font-bold">{totalAmount.toFixed(2)} USD</span>
         </div>
       </header>
       <section className="mt-6">
@@ -48,9 +54,7 @@ const Donations = () => {
             {donations.length > 0 ? (
               donations.map((donation: IDonation) => (
                 <tr key={donation.donation_id}>
-                  <td className="py-3 px-4">
-                    {donation.user.name}
-                  </td>
+                  <td className="py-3 px-4">{donation.user.name}</td>
                   <td className="py-3 px-4">
                     {donation.user.credentials.email}
                   </td>
@@ -58,12 +62,19 @@ const Donations = () => {
                     {new Date(donation.date).toLocaleDateString()}
                   </td>
                   <td className="py-3 px-4">
-                    {donation.amount} USD
+                    {typeof donation.amount === "string"
+                      ? parseFloat(donation.amount).toFixed(2)
+                      : donation.amount.toFixed(2)}{" "}
+                    USD
                   </td>
                 </tr>
               ))
             ) : (
-              <div className="py-3 px-4">No hay donaciones aún...</div>
+              <tr>
+                <td className="py-3 px-4" colSpan={4}>
+                  No hay donaciones aún...
+                </td>
+              </tr>
             )}
           </tbody>
         </table>

@@ -16,7 +16,7 @@ const benefits = [
     id: 3,
     title:
       "Activa el modo Bienestar para mantenerte enfocado y evitar sobrecargas",
-    image: "/benefits-section/gatobienestar.svg",
+    image: "/benefits-section/modobienestar.svg",
     alt: "gato contento, con manos levantadas",
   },
   {
