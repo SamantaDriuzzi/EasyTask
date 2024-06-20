@@ -114,7 +114,7 @@ const PageMyAccount = () => {
       formData.append("profilePicture", file);
 
       try {
-        const response = await fetch(`${API_URL}/files/profilePicture`, {
+        const response = await fetch(`${API_URL}/files/profilePicture?userId=${userId}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${user.token}`,
