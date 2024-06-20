@@ -16,7 +16,7 @@ const Chat = () => {
     const [amiwis, setAmiwis] = useState<User[]>([]);
     const { userIdFromToken } = useAuth();
     const id = userIdFromToken();
-
+    
     useEffect(() => {
         const fetchUser = async () => {
             if (id) {
@@ -31,20 +31,20 @@ const Chat = () => {
 
     useEffect(() => {
         if (!user) return;
+        
 
         const handleReceivedMessage = (message: Message) => {
             setMessages((prevMessages) => [...prevMessages, message]);
         };
 
-        const socket = io('http://localhost:3000', {
-          auth: {
-            token: user.token,
-            name: user.name,
-            id: user.user_id,
-          },
-          withCredentials: true, 
+        const socket = io("http://localhost:3000", {
+            auth: {
+                token: user.token,
+                name: user.name,
+                id: user.user_id,
+            },
+            withCredentials: true,
         });
-        
 
         socket.on("connect", () => {
             console.log("Conectado");
@@ -114,29 +114,30 @@ const Chat = () => {
                         <Image src="/catchat.svg" alt="Chat" width={200} height={100} />
                         <h3 className="text-white mt-4 text-center">Envía un mensaje a un compañero de trabajo</h3>
                         <ul className="mt-4 w-full">
-                            {amiwis.map((friend) => (
-                                <li
-                                    key={friend.user_id}
-                                    className="bg-white p-2 my-2 rounded-md flex items-center cursor-pointer"
-                                    onClick={() => handleFriendClick(friend)}
-                                >
-                                    <div className="relative w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-2">
-                                        {friend.profilePicture ? (
-                                            <Image
-                                                src={friend.profilePicture}
-                                                alt={friend.name}
-                                                layout="fill"
-                                                objectFit="cover"
-                                            />
-                                        ) : (
-                                            <div className="bg-black text-white w-8 h-8 rounded-full flex items-center justify-center">
-                                                <span>{friend.name[0]}</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <span>{friend.name}</span>
-                                </li>
-                            ))}
+                            {Array.isArray(amiwis) &&
+                                amiwis.map((friend) => (
+                                    <li
+                                        key={friend.user_id}
+                                        className="bg-white p-2 my-2 rounded-md flex items-center cursor-pointer"
+                                        onClick={() => handleFriendClick(friend)}
+                                    >
+                                        <div className="relative w-8 h-8 rounded-full overflow-hidden flex items-center justify-center mr-2">
+                                            {friend.profilePicture ? (
+                                                <Image
+                                                    src={friend.profilePicture}
+                                                    alt={friend.name}
+                                                    layout="fill"
+                                                    objectFit="cover"
+                                                />
+                                            ) : (
+                                                <div className="bg-black text-white w-8 h-8 rounded-full flex items-center justify-center">
+                                                    <span>{friend.name[0]}</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <span>{friend.name}</span>
+                                    </li>
+                                ))}
                         </ul>
                         <h3 className="text-white mt-4 text-center">Envía un mensaje a alguien conectado</h3>
                     </div>

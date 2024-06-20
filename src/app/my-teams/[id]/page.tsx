@@ -1,6 +1,5 @@
 "use client"
 import ChatButton from "@/components/ChatButton";
-"use client";
 import { getMyTeams } from "@/helpers/teams/get";
 import { Team } from "@/utils/types/interface-team";
 import { useRouter } from "next/navigation";
