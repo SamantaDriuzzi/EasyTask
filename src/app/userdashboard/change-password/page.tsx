@@ -6,6 +6,7 @@ import Logo from "@/components/logo";
 import { useAuth } from "@/contextLogin/AuthContext";
 import { getUserById } from "@/helpers/users/get";
 import { User } from "@/utils/types/interface-user";
+import Swal from "sweetalert2";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -56,7 +57,10 @@ const ChangePassword = () => {
       //         throw new Error(data.message || "Error al cambiar la contraseña");
       //       }
 
-      alert("Contraseña cambiada con éxito");
+      Swal.fire({
+        icon: "success",
+        title: "Cambio de contraseña exitoso!",
+      });
       setErrorMessage("");
     } catch (error) {
       setErrorMessage((error as Error).message || "Error desconocido");
