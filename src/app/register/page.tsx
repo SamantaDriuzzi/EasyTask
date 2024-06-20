@@ -70,7 +70,7 @@ const Register = () => {
           });
           Swal.fire({
             icon: "success",
-            title: "Registro exitoso!"
+            title: "Registro exitoso!",
           });
           setTimeout(() => {
             router.push("/login");
@@ -80,14 +80,14 @@ const Register = () => {
           Swal.fire({
             icon: "error",
             title: "Error en el registro",
-            text: "Por favor, intenta nuevamente"
+            text: "Por favor, intenta nuevamente",
           });
         }
       } else {
         Swal.fire({
           icon: "error",
           title: "Oops...",
-          text: "Hay errores en el formulario"
+          text: "Hay errores en el formulario",
         });
       }
     }

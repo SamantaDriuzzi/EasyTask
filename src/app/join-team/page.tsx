@@ -27,7 +27,7 @@ const UneteAUnEquipoPage = () => {
       if (data && data.team.team_id && data.team.team_name) {
         Swal.fire({
           icon: "success",
-          title: "Te sumaste al equipo!"
+          title: "Te sumaste al equipo!",
         });
         setTeamName(data.team.team_name);
         openModal();
@@ -35,7 +35,7 @@ const UneteAUnEquipoPage = () => {
       } else {
         Swal.fire({
           icon: "error",
-          title: "Hubo un error al unirse"
+          title: "Hubo un error al unirse",
         });
       }
     } catch (error) {

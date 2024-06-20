@@ -57,7 +57,7 @@ const LoginPage = () => {
       localStorage.setItem("userSession", JSON.stringify({ token: token }));
       Swal.fire({
         icon: "success",
-        title: "Ingresaste con éxito!"
+        title: "Ingresaste con éxito!",
       });
       setTimeout(() => {
         router.push("/home");

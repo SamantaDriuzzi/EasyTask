@@ -65,7 +65,7 @@ const CreateTeam = ({ params }: { params: { id: string } }) => {
     if (!userId) {
       Swal.fire({
         icon: "warning",
-        title: "La identificación de usuario no está disponible"
+        title: "La identificación de usuario no está disponible",
       });
       return;
     }
