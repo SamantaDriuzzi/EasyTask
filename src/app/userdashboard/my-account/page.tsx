@@ -74,7 +74,6 @@ const PageMyAccount = () => {
   useEffect(() => {
     const loadUserData = async () => {
       const userId = userIdFromToken();
-      console.log(userId);
       if (userId) {
         try {
           const user = await getUserById(userId);
@@ -131,7 +130,7 @@ const PageMyAccount = () => {
 
     if (file && userId) {
       const formData = new FormData();
-      formData.append("profilePicture", file);
+      formData.append("image", file);
 
       console.log("data antes de enviar foto:::::", formData);
 
@@ -148,7 +147,7 @@ const PageMyAccount = () => {
         alert("Imagen subida con éxito");
       } catch (error) {
         console.error("Error uploading image:", error);
-        alert(`Error al subir la imagen`);
+        alert("Error al subir la imagen");
       }
     } else {
       alert(
